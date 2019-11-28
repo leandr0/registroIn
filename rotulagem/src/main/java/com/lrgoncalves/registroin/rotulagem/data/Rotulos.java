@@ -3,11 +3,15 @@
  */
 package com.lrgoncalves.registroin.rotulagem.data;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 
 import org.bson.Document;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -77,6 +81,46 @@ public class Rotulos {
 			
 			rotulo.append("cliente", client);
 			rotulo.append("informacao_nutricional", informacaoNutricional);
+			
+			Document denominacaoProduto = new Document();
+			denominacaoProduto.append("descricao", "Sugerimos adequar a denominação do produto para... ");
+			rotulo.append("denominacao_produto", denominacaoProduto);
+			
+			Document conservacaoProduto = new Document();
+			
+			Map<String, String> validadeConservacao = new HashMap<String, String>();
+			validadeConservacao.put("Validade a -18˚C(freezer):"		, "DD/MM/AA");
+			validadeConservacao.put("Validade a -4˚C (congelador):"		, "DD/MM/AA");
+			validadeConservacao.put("Validade a 4˚C (refrigerador):"	, "DD/MM/AA");
+			
+			conservacaoProduto.append("validade_produto", validadeConservacao);
+			 
+			rotulo.append("conservacao_produto", conservacaoProduto);
+			
+			Document distribuidor = new Document();
+			distribuidor.append("descricao", "Inserir informações do Distribuídor ....");
+			rotulo.append("distribuidor", distribuidor);
+			
+			Document tartrazina = new Document();
+			tartrazina.append("descricao", "A lista de ingredientes deve apresentar o nome do corante tartrazina INS 102 por extenso, em caixa alta e negrito.");
+			rotulo.append("tartrazina", tartrazina);
+			
+			Document aromatizante = new Document();
+			aromatizante.append("descricao", "Inserir o termo \"AROMATIZADO ..\"");
+			rotulo.append("aromatizante", aromatizante);
+			
+			Document derivadosLacteos = new Document();
+			derivadosLacteos.append("descricao", "Inserir a inscrição \"CONTÉM LACTOSE\" logo após a inscrição \"NÃO CONTÉM GLÚTEN\". Em negrito e caixa alta.");
+			rotulo.append("derivados_lacteos", derivadosLacteos);
+			
+			Document importador = new Document();
+			importador.append("descricao", "Inserir informações do Importador.");
+			rotulo.append("importador", importador);
+			
+			Document aspartameFenilalanina = new Document();
+			aspartameFenilalanina.append("descricao", "Inserir a informação: \"CONTÉM FENILALANINA\", em caixa alta e negrito");
+			rotulo.append("aspartame_fenilalanina", aspartameFenilalanina);
+			
 			
 			
 			collection.insertOne(rotulo);

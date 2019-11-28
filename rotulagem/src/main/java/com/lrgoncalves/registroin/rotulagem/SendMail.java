@@ -21,17 +21,17 @@ import javax.mail.internet.MimeMessage;
  */
 public class SendMail {
 
-	static String emailDestinatario = "vanessa@registroin.com,leandro1604@gmail.com";
-	static String nomeDestinatario = "Nome Destinatario";
+	static String emailDestinatario = "leandro@registroin.com,leandro1604@gmail.com";
+	//static String nomeDestinatario = "Nome Destinatario";
 	static String emailRemetente = "consultoria@registroin.com.br";
-	static String nomeRemetente = "Nome Remetente";
+	//static String nomeRemetente = "Nome Remetente";
 	static String assunto = "RegistroIn - email retulagem";
 	static String body = "Tipo assim ... ";
 
 	static String protocolo = "smtp";
 	static String servidor = "email-ssl.com.br";// "smtplw.com.br"; // do painel de controle do SMTP
-	static String username = "leandro@registroin.com.br"; // do painel de controle do SMTP
-	static String senha = "Le@ndr#2019"; // do painel de controle do SMTP
+	static String username = "consultoria@registroin.com.br"; // do painel de controle do SMTP
+	static String senha = "Consu!2@19"; // do painel de controle do SMTP
 	static String porta = "587"; // do painel de controle do SMTP
 
 	public static void main(String[] args) {
@@ -50,7 +50,7 @@ public class SendMail {
 		session.setDebug(false);
 
 		try {
-			InternetAddress iaFrom = new InternetAddress(emailRemetente, nomeRemetente);
+			InternetAddress iaFrom = new InternetAddress(emailRemetente);//, nomeRemetente);
 			
 			InternetAddress[] recipientAddress = new InternetAddress[recipientList.length];
 			int counter = 0;
@@ -62,7 +62,7 @@ public class SendMail {
 			//InternetAddress[] iaTo = new InternetAddress[1];
 			InternetAddress[] iaReplyTo = new InternetAddress[1];
 
-			iaReplyTo[0] = new InternetAddress(emailDestinatario, nomeDestinatario);
+			iaReplyTo[0] = new InternetAddress(emailRemetente);//, nomeDestinatario);
 			//iaTo[0] = new InternetAddress(emailDestinatario, nomeDestinatario);
 
 			MimeMessage msg = new MimeMessage(session);
@@ -86,8 +86,6 @@ public class SendMail {
 			tr.sendMessage(msg, msg.getAllRecipients());
 			tr.close();
 
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
