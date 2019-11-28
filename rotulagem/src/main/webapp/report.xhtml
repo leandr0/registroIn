@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<h:outputScript name="commons.js" library="javascript" />
+	<h:outputStylesheet name="screen.css" library="css" />
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{resource['images/ico.png']}" />
+</h:head>
+
+<h:body styleClass="body">
+	<h:form id="report" prependId="false">
+		<div id="header">
+			<div id="logo_left" class="logo_left">
+				<p:commandLink action="home">
+					<p:graphicImage name="images/LOGO.png" styleClass="image_logo" />
+				</p:commandLink>
+			</div>
+			<div id="logo_right" class="logo_right">
+				<p:graphicImage name="images/rotulo-de-alimentos.jpeg"
+					id="logo-rotulo-alimentos" styleClass="image_logo" />
+			</div>
+		</div>
+
+		<div id="page-report">
+			 <h:commandLink onclick="generatePDF()">
+                    <p:graphicImage name="images/pdf.png" width="24"/>
+                </h:commandLink>
+			<div style="height: 80%; width: 80%;" id="div_report_data">
+				<div id="os_information" align="center">
+						<table class="pure-table pure-table-bordered" style="width:100%">
+							<tr>
+								<th style="text-align:left; width:60px"><p:outputLabel value="Cliente: " /></th>
+								<td><h:outputText id="cliente_it" value="#{rotulo_ui.empresa}" /></td>
+								<th style="text-align:center"><p:outputLabel value="Código: " /></th>
+							</tr>
+							<tr>
+								<th style="text-align:left"><p:outputLabel value="Produto: " /></th>
+								<td><h:outputText id="produto_it" value="#{rotulo_ui.produto}" /></td>
+								<td rowspan="2" style="text-align:center;width:200px">
+								<p:barcode value="#{rotulo_ui.codidoRegistro}" type="pdf417" style="max-width: 200px;height: 40px;"/></td>
+							</tr>
+							<tr>
+								<th style="text-align:left"><p:outputLabel value="Data: " /></th>
+								<td><h:outputText id="data_im" value="#{rotulo_ui.data}" /></td>
+							</tr>
+
+						</table>
+				</div>
+				
+				<h:panelGrid columns="2" cellpadding="5" id="report-table" styleClass="table-report" >
+					<p:outputLabel for="denominacao_do_produto_ita"
+						value="#{rotulo_ui.indexDenominacaoDoProduto}. "
+						class="report-index"
+						rendered="#{rotulo_ui.showDenominacaoDoProduto}" />
+					<h:outputText id="denominacao_do_produto_ita"
+						value="#{rotulo_ui.denominacaoDoProduto}"
+						rendered="#{rotulo_ui.showDenominacaoDoProduto}"
+						styleClass="report-value" />
+
+					<p:outputLabel for="aromatizante_som"
+						value="#{rotulo_ui.indexAromatizante}. " class="report-index"
+						rendered="#{rotulo_ui.showAromatizante}" />
+					<h:outputText id="aromatizante_som"
+						value="#{rotulo_ui.aromatizante}"
+						rendered="#{rotulo_ui.showAromatizante}" styleClass="report-value" />
+
+					<p:outputLabel for="fonte_peso_liquido_in"
+						value="#{rotulo_ui.indexPesoLiquido}. " class="report-index"
+						rendered="#{rotulo_ui.showPesoLiquido}" />
+					<h:outputText id="fonte_peso_liquido_in"
+						value="#{rotulo_ui.fontePesoLiquido}"
+						rendered="#{rotulo_ui.showPesoLiquido}" styleClass="report-value" />
+
+					<p:outputLabel for="gluten_som" value="#{rotulo_ui.indexGluten}. "
+						class="report-index" rendered="#{rotulo_ui.showGluten}" />
+					<h:outputText id="gluten_som" value="#{rotulo_ui.gluten}"
+						rendered="#{rotulo_ui.showGluten}" styleClass="report-value" />
+
+					<p:outputLabel for="industria_origem_ita"
+						value="#{rotulo_ui.indexIndustriaDeOrigem}. " class="report-index"
+						rendered="#{rotulo_ui.showIndustriaDeOrigem}" />
+					<h:outputText id="industria_origem_ita"
+						value="#{rotulo_ui.industriaDeOrigem}"
+						rendered="#{rotulo_ui.showIndustriaDeOrigem}"
+						styleClass="report-value" />
+
+					<p:outputLabel for="ingredientes_ita"
+						value="#{rotulo_ui.indexIngrediente}. " class="report-index"
+						rendered="#{rotulo_ui.showIngrediente}" />
+					<h:outputText id="ingredientes_ita"
+						value="#{rotulo_ui.ingrediente}"
+						rendered="#{rotulo_ui.showIngrediente}" styleClass="report-value" />
+
+					<p:outputLabel for="lactose_ita"
+						value="#{rotulo_ui.indexLactose}. " class="report-index"
+						rendered="#{rotulo_ui.showLactose}" />
+					<h:outputText id="lactose_ita" value="#{rotulo_ui.lactose}"
+						rendered="#{rotulo_ui.showLactose}" styleClass="report-value" />
+
+					<p:outputLabel for="alergico_ita"
+						value="#{rotulo_ui.indexAlergico}. " class="report-index"
+						rendered="#{rotulo_ui.showAlergico}" />
+					<h:outputText id="alergico_ita"
+						value="#{rotulo_ui.descricaoAlergico}"
+						rendered="#{rotulo_ui.showAlergico}" styleClass="report-value" />
+					
+					<p:outputLabel for="produzido_ita"
+						value="#{rotulo_ui.indexProduzido}. " class="report-index"
+						rendered="#{rotulo_ui.showProduzido}" />
+					<h:outputText id="produzido_ita"
+						value="#{rotulo_ui.descricaoProduzido}"
+						rendered="#{rotulo_ui.showProduzido}" styleClass="report-value" />
+
+					<p:outputLabel for="distribuidor_ita"
+						value="#{rotulo_ui.indexDistribuido}. " class="report-index"
+						rendered="#{rotulo_ui.showDistribuido}" />
+					<h:outputText id="distribuidor_ita"
+						value="#{rotulo_ui.descricaoDistribuido}"
+						rendered="#{rotulo_ui.showDistribuido}" />
+
+					<p:outputLabel for="importador_ita"
+						value="#{rotulo_ui.indexImportado}. " class="report-index"
+						rendered="#{rotulo_ui.showImportado}" />
+					<h:outputText id="importador_ita"
+						value="#{rotulo_ui.descricaoImportado}"
+						rendered="#{rotulo_ui.showImportado}" />
+
+					<p:outputLabel for="data_fabricacao_ita"
+						value="#{rotulo_ui.indexDataFabricacao}. " class="report-index"
+						rendered="#{rotulo_ui.showDataFabricacao}" />
+					<h:outputText id="data_fabricacao_ita"
+						value="#{rotulo_ui.dataFabricacao}"
+						rendered="#{rotulo_ui.showDataFabricacao}" />
+
+					<p:outputLabel for="prazo_validade_ita"
+						value="#{rotulo_ui.indexPrazoValidade}. " class="report-index"
+						rendered="#{rotulo_ui.showPrazoValidade}" />
+					<h:outputText id="prazo_validade_ita"
+						value="#{rotulo_ui.prazoValidade}"
+						rendered="#{rotulo_ui.showPrazoValidade}" />
+
+					<p:outputLabel for="lote_ita" value="#{rotulo_ui.indexLote}. "
+						class="report-index" rendered="#{rotulo_ui.showLote}" />
+					<h:outputText id="lote_ita" value="#{rotulo_ui.lote}"
+						rendered="#{rotulo_ui.showLote}" />
+
+
+					<p:outputLabel for="alergenos_ita"
+						value="#{rotulo_ui.indexGlutenAlergenos}. " class="report-index"
+						rendered="#{rotulo_ui.showGlutenAlergenos}" />
+					<h:outputText id="alergenos_ita"
+						value="#{rotulo_ui.descricaoGlutenAlergenos}"
+						rendered="#{rotulo_ui.showGlutenAlergenos}"
+						styleClass="report-value" />
+
+					<p:outputLabel for="uso_produto_ita"
+						value="#{rotulo_ui.indexUsoProduto}. " class="report-index"
+						rendered="#{rotulo_ui.showUsoProduto}" />
+					<h:outputText id="uso_produto_ita"
+						value="#{rotulo_ui.descricaoUsoProduto}"
+						rendered="#{rotulo_ui.showUsoProduto}" styleClass="report-value" />
+
+					<p:outputLabel for="uso_produto_ita"
+						value="#{rotulo_ui.indexValidadeProduto}. "
+						rendered="#{rotulo_ui.showValidadeProduto}" class="report-index" />
+					<p:panel rendered="#{rotulo_ui.showValidadeProduto}" style="border:0px;padding:0px; margin:0px;" id="panel_validade_produto">
+						
+						<h:outputText value="Inserir informações de conservação conforme tabela abaixo:" style="border:0px;padding:0px; margin:0px;" id="test_02"/>
+						
+						<p:panelGrid columns="2" style="margin:10px 0px 0px 0px"
+							rendered="#{rotulo_ui.showValidadeProduto}" id="test_03">
+							<h:outputText value="Validade a -18˚C(freezer):"
+								class="report-index" />
+							<h:outputText value="#{rotulo_ui.validadeFreezer}" />
+	
+							<h:outputText value="Validade a -4˚C (congelador):"
+								class="report-index" />
+							<h:outputText value="#{rotulo_ui.validadeCongelador}" />
+	
+							<h:outputText value="Validade a 4˚C (refrigerador):"
+								class="report-index" />
+							<h:outputText value="#{rotulo_ui.validadeRefrigerador}" />
+						</p:panelGrid>
+					</p:panel>	
+
+
+					<p:outputLabel for="informacao_nutricional_ita"
+						value="#{rotulo_ui.indexInformacaoNutricional}. "
+						class="report-index"
+						rendered="#{rotulo_ui.showInformacaoNutricional}" />
+					<h:outputText id="informacao_nutricional_ita"
+						value="#{rotulo_ui.informacaoNutricional}"
+						rendered="#{rotulo_ui.showInformacaoNutricional}" />
+				</h:panelGrid>
+				<div class="report-div" id="div_informacao_nutricional">
+					<p:panel rendered="#{rotulo_ui.showInformacaoNutricional}"
+						style="border-style: none;">
+						<table class="pure-table pure-table-bordered">
+							<tr>
+								<th colspan="3" class="text-title-center">Informação
+									Nutricional</th>
+
+							</tr>
+							<tr>
+								<th colspan="3" class="text-right"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.porcao}"
+										id="otpt-vlr-porcao">
+									</p:outputLabel></th>
+							</tr>
+							<tr>
+								<td rowspan="2" style="vertical-align: bottom;">Valor
+									Energético</td>
+								<th>Quantidade por Porção</th>
+								<th class="text-qtd-vd">%VD(*)</th>
+							</tr>
+							<tr>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcao.valorEnergeticoDescritivo} g"
+										id="otpt-vlr-energetico" /></td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.valorEnergetico}"
+										id="otpt-vlr-energetico-vd">
+										<f:convertNumber integerOnly="true" />
+									</p:outputLabel></td>
+							</tr>
+							<tr>
+								<td>Carboidratos</td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcao.carboidratosDesc} g"
+										id="otpt-vlr-carboidratos" /></td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.carboidratos}"
+										id="otpt-vlr-carboidratos-vd">
+										<f:convertNumber integerOnly="true" />
+									</p:outputLabel></td>
+							</tr>
+							<tr>
+								<td>Proteínas</td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcao.proteinasDesc} g"
+										id="otpt-vlr-proteinas" /></td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.proteinas}"
+										id="otpt-vlr-proteinas-vd">
+										<f:convertNumber integerOnly="true" />
+									</p:outputLabel></td>
+							</tr>
+							<tr>
+								<td>Gorduras Totais</td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcao.gorduraTotaisDesc} g"
+										id="otpt-vlr-gordura-totais" /></td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.gorduraTotais}"
+										id="otpt-vlr-gordura-totais-vd">
+										<f:convertNumber integerOnly="true" />
+									</p:outputLabel></td>
+							</tr>
+							<tr>
+								<td>Gorduras Saturadas</td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcao.gordurasSaturadasDesc} g"
+										id="otpt-vlr-gordura-saturadas" /></td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.gordurasSaturadas}"
+										id="otpt-vlr-gordura-saturadas-vd">
+										<f:convertNumber integerOnly="true" />
+									</p:outputLabel></td>
+							</tr>
+							<tr>
+								<td>Gorduras Trans</td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcao.gordurasTransDesc} g"
+										id="otpt-vlr-gordura-trans" /></td>
+								<td class="text-qtd-vd">**</td>
+							</tr>
+							<tr>
+								<td>Fibra Alimentar</td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcao.fibraAlimentarDesc} g"
+										id="otpt-vlr-fibra-alimentar" /></td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.fibraAlimentar}"
+										id="otpt-vlr-fibra-alimentar-vd">
+										<f:convertNumber integerOnly="true" />
+									</p:outputLabel></td>
+							</tr>
+							<tr>
+								<td>Sódio</td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcao.sodioDesc} mg"
+										id="otpt-vlr-sodio" /></td>
+								<td class="text-qtd-vd"><p:outputLabel
+										value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.sodio}"
+										id="otpt-vlr-sodio-vd">
+										<f:convertNumber integerOnly="true" />
+									</p:outputLabel></td>
+							</tr>
+							<tr>
+								<td colspan="3">(*) Valores Diários de referência com base
+									em uma dieta de 2000kcal ou 8400kJ. Seus valores diários podem
+									ser maiores ou menores dependendo das necessidades
+									energéticas.(**) VD não estabelecido.</td>
+							</tr>
+						</table>
+					</p:panel>
+				</div>
+				<h:panelGrid columns="2" cellpadding="5" id="report-table-bottom">
+					<p:outputLabel for="tartrazina_ita"
+						value="#{rotulo_ui.indexTartrazina}. " class="report-index"
+						rendered="#{rotulo_ui.showTartrazina}" />
+					<h:outputText id="tartrazina_ita" value="#{rotulo_ui.tartrazina}"
+						rendered="#{rotulo_ui.showTartrazina}" />
+
+					<p:outputLabel for="fenilalanina_ita"
+						value="#{rotulo_ui.indexFenilalanina}. " class="report-index"
+						rendered="#{rotulo_ui.showFenilalanina}" />
+					<h:outputText id="fenilalanina_ita"
+						value="#{rotulo_ui.fenilalanina}"
+						rendered="#{rotulo_ui.showFenilalanina}" />
+
+					<p:outputLabel for="sac_ita" value="#{rotulo_ui.indexSac}. "
+						class="report-index" rendered="#{rotulo_ui.showSac}" />
+					<h:outputText id="sac_ita" value="#{rotulo_ui.sac}"
+						rendered="#{rotulo_ui.showSac}" />
+
+					<p:outputLabel for="transgenico_ita"
+						value="#{rotulo_ui.indexTransgenico}. " class="report-index"
+						rendered="#{rotulo_ui.showTransgenico}" />
+					<h:outputText id="transgenico_ita" value="#{rotulo_ui.transgenico}"
+						rendered="#{rotulo_ui.showTransgenico}" />
+
+					<p:outputLabel for="registro_ita"
+						value="#{rotulo_ui.indexRegistro}. " class="report-index"
+						rendered="#{rotulo_ui.showRegistro}" />
+					<h:outputText id="registro_ita" value="#{rotulo_ui.registro}"
+						rendered="#{rotulo_ui.showRegistro}" />
+
+				</h:panelGrid>
+			</div>
+		</div>
+	</h:form>
+</h:body>
+</html>

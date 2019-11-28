@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<h:outputScript name="commons.js" library="javascript" />
+	<h:outputStylesheet name="screen.css" library="css" />
+
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{resource['images/ico.png']}" />
+</h:head>
+
+<h:body styleClass="body">
+	<h:form id="input" prependId="false">
+		<div id="header">
+			<div id="logo_left" class="logo_left">
+				<p:graphicImage name="images/LOGO.png" styleClass="image_logo" />
+			</div>
+
+			<div id="logo_right" class="logo_right">
+				<p:graphicImage name="images/rotulo-de-alimentos.jpeg"
+					id="logo-rotulo-alimentos" styleClass="image_logo" />
+			</div>
+		</div>
+
+		<p:menubar>
+			<p:submenu label="File" icon="pi pi-file">
+				<p:submenu label="New" icon="pi pi-briefcase">
+					<p:menuitem value="Project" url="#" />
+					<p:menuitem value="Other" url="#" />
+				</p:submenu>
+				<p:menuitem value="Open" url="#" />
+				<p:separator />
+				<p:menuitem value="Quit" url="#" />
+			</p:submenu>
+
+			<p:submenu label="Edit" icon="pi pi-pencil">
+				<p:menuitem value="Undo" url="#" icon="pi pi-angle-double-left" />
+				<p:menuitem value="Redo" url="#" icon="pi pi-angle-double-right" />
+			</p:submenu>
+
+			<p:submenu label="Relatório" icon="pi pi-cog">
+				<p:submenu label="Visualizar" icon="pi pi-refresh">
+					<p:menuitem value="Save" icon="pi-save" update="email_validation_message" action="#{rotulo_ui.report}"/>
+				</p:submenu>
+			</p:submenu>
+
+
+			<f:facet name="options">
+				<p:inputText style="margin:1px 10px 1px 1px;" placeholder="Search" />
+				<p:commandButton type="button" value="Logout" icon="pi pi-home" />
+			</f:facet>
+		</p:menubar>
+
+		<div id="os_information" class="os_information">
+			<fieldset>
+				<legend>Informações do Cliente</legend>
+				<h:panelGrid columns="2" cellpadding="5" id="panel_client_information">
+					
+					<p:outputLabel value="Nome: " />
+					<p:inputText id="cliente_it" value="#{rotulo_ui.empresa}" />
+
+					<p:outputLabel value="Produto: " />
+					<p:inputText id="produto_it" value="#{rotulo_ui.produto}" />
+
+					<p:outputLabel value="Data: " />
+					<p:inputMask id="data_im" value="#{rotulo_ui.data}" mask="99/99/9999" />
+					
+					<p:outputLabel value="email: " />
+					<p:inputText id="email_im" value="#{rotulo_ui.email}" validatorMessage="Email incorreto !">
+						<!-- f:validateRegex pattern="#{rotulo_ui.emailPattern}"></f:validateRegex-->
+					</p:inputText>
+					
+				</h:panelGrid>
+			</fieldset>
+		</div>
+		<p:message for="email_im" id="email_validation_message"/>
+		
+		<div id="ux_function" class="ux_function">
+			<fieldset>
+				<legend>Utils</legend>
+				<h:panelGrid style="margin-bottom:10px" >
+					<p:selectBooleanCheckbox value="#{rotulo_ui.selectAll}" itemLabel="Selecionar todos" id="ckeck_box_selecionar_todos" styleClass="checkbox">
+						<p:ajax update="panel_checkbox panel_data" event="change" listener="#{rotulo_ui.checkBoxHandle}"/>
+					</p:selectBooleanCheckbox>
+						
+					<p:commandButton value="Limpar informações" id="clear_data" action="#{rotulo_ui.clearData}" update="panel_data panel_client_information" style="background:none;" image="clear-icon" />
+						
+				</h:panelGrid>
+			</fieldset>
+		</div> 
+		
+		<div id="page">
+			<div style="height: 80%; width: 100%" id="div_denominacao_produto_check">
+
+				<h:panelGrid columns="6" style="margin-bottom:10px" cellpadding="5" id="panel_checkbox">
+					<p:selectBooleanCheckbox
+						value="#{rotulo_ui.showDenominacaoDoProduto}"
+						itemLabel="Denominação Produto" id="ckeck_box_denominacao_produto"
+						styleClass="checkbox">
+						<p:ajax
+							update="ckeck_box_denominacao_produto panel_denominacao_produto_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showAromatizante}"
+						itemLabel="Aromatizante" id="ckeck_box_aromatizante">
+						<p:ajax update="ckeck_box_aromatizante panel_aromatizante_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showPesoLiquido}"
+						itemLabel="Peso Liquido" id="ckeck_box_peso_liquido"
+						styleClass="chkbox">
+						<p:ajax update="ckeck_box_peso_liquido panel_peso_liquido_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showGluten}"
+						itemLabel="Glúten" id="ckeck_box_gluten" styleClass="chkbox">
+						<p:ajax update="ckeck_box_gluten panel_gluten_data" event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showIndustriaDeOrigem}"
+						itemLabel="Indústria de origem" id="ckeck_box_industria_origem"
+						styleClass="chkbox">
+						<p:ajax
+							update="ckeck_box_industria_origem panel_industria_origem_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showIngrediente}"
+						itemLabel="Ingredientes" id="ckeck_box_ingredientes"
+						styleClass="chkbox">
+						<p:ajax update="ckeck_box_ingredientes panel_ingrediente_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showValidadeProduto}"
+						itemLabel="Tabela de conservação"
+						id="ckeck_box_tabela_conservacao" styleClass="chkbox">
+						<p:ajax update="ckeck_box_tabela_conservacao panel_tabela_conservacao_data"	event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showLactose}"
+						itemLabel="Derivados lácteos" id="ckeck_box_lactose">
+						<p:ajax update="ckeck_box_lactose panel_lactose_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showAlergico}"
+						itemLabel="Alérgicos" id="ckeck_box_alergico">
+						<p:ajax update="ckeck_box_alergico panel_alergico_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showGlutenAlergenos}"
+						itemLabel="Glúten e Alergenos" id="ckeck_box_alergenos">
+						<p:ajax update="ckeck_box_alergenos panel_alergenos_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showUsoProduto}"
+						itemLabel="Uso do produto" id="ckeck_box_uso_produto">
+						<p:ajax update="ckeck_box_uso_produto panel_uso_produto_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showProduzido}"
+						itemLabel="Produtor" id="ckeck_box_produzido">
+						<p:ajax update="ckeck_box_produzido panel_produtor_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showDistribuido}"
+						itemLabel="Distribuídor" id="ckeck_box_distribuido">
+						<p:ajax update="ckeck_box_distribuido panel_distribuidor_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showImportado}"
+						itemLabel="Importador" id="ckeck_box_importador">
+						<p:ajax update="ckeck_box_importador panel_importador_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showDataFabricacao}"
+						itemLabel="Data de fabricação" id="ckeck_box_data_fabricacao">
+						<p:ajax
+							update="ckeck_box_data_fabricacao panel_data_fabricacao_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showPrazoValidade}"
+						itemLabel="Prazo de validade" id="ckeck_box_prazo_validade">
+						<p:ajax
+							update="ckeck_box_prazo_validade panel_prazo_validade_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showLote}"
+						itemLabel="Lote" id="ckeck_box_lote">
+						<p:ajax update="ckeck_box_lote panel_lote_data" event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox
+						value="#{rotulo_ui.showInformacaoNutricional}"
+						itemLabel="Informação nutricional"
+						id="ckeck_box_informacao_nutricional">
+						<p:ajax
+							update="ckeck_box_informacao_nutricional panel_informacao_nutricional_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showTartrazina}"
+						itemLabel="Tartrazina" id="ckeck_box_tartrazina">
+						<p:ajax update="ckeck_box_tartrazina panel_tartrazina_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showFenilalanina}"
+						itemLabel="Aspartame ou fenilalanina" id="ckeck_box_fenilalanina">
+						<p:ajax update="ckeck_box_fenilalanina panel_fenilalanina_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showSac}"
+						itemLabel="SAC" id="ckeck_box_sac">
+						<p:ajax update="ckeck_box_sac panel_sac_data" event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showTransgenico}"
+						itemLabel="Transgênico" id="ckeck_box_transgenico">
+						<p:ajax update="ckeck_box_transgenico panel_transgenico_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.showRegistro}"
+						itemLabel="Registro MAPA" id="ckeck_box_registro">
+						<p:ajax update="ckeck_box_registro panel_registro_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
+				</h:panelGrid>
+			</div>
+
+
+		<p:outputPanel id="panel_data">
+			<div style="height: 80%; width: 100%;" id="div_denominacao_produto_data">
+				<p:outputPanel id="panel_denominacao_produto_data">
+					<p:panel header="Denominação do produto" toggleable="true"
+						rendered="#{rotulo_ui.showDenominacaoDoProduto}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="denominacao_do_produto_ita"
+								value="Denominação do produto: " />
+							<p:inputTextarea id="denominacao_do_produto_ita" rows="5"
+								cols="60" autoResize="false"
+								value="#{rotulo_ui.denominacaoDoProduto}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM DENOMINAÇÃO PRODUTO -->
+			<!-- INICIO AROMATIZANTE -->
+
+			<div style="height: 80%; width: 100%" id="div_aromatizante_data">
+				<p:outputPanel id="panel_aromatizante_data">
+					<p:panel header="Aromatizante" toggleable="true"
+						rendered="#{rotulo_ui.showAromatizante}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="aromatizante_som" value="Aromatizante: " />
+							<p:selectOneMenu id="aromatizante_som"
+								value="#{rotulo_ui.aromatizante}">
+								<f:selectItem itemLabel="Select One" itemValue="" />
+								<f:selectItems value="#{rotulo_ui.aromatizantes}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM AROMATIZANTE -->
+			<!-- INICIO PESO LIQUIDO -->
+
+			<div style="height: 80%; width: 100%" id="div_peso_liquido_data">
+				<p:outputPanel id="panel_peso_liquido_data">
+					<p:panel header="Peso liquido" toggleable="true"
+						rendered="#{rotulo_ui.showPesoLiquido}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="peso_liquido_in" value="Peso Liquido: " />
+							<p:inputNumber id="peso_liquido_in"
+								value="#{rotulo_ui.pesoLiquido}" decimalPlaces="0">
+								<p:ajax update="fonte_peso_liquido_in" event="change"
+									listener="#{rotulo_ui.calculoPesoLiquido}" />
+							</p:inputNumber>
+							<p:outputLabel for="fonte_peso_liquido_in" value="Fonte: " />
+							<p:inputTextarea id="fonte_peso_liquido_in"
+								value="#{rotulo_ui.fontePesoLiquido}" rows="3" cols="80"
+								autoResize="true" readonly="true" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM PESO LIQUIDO -->
+			<!-- INICIO GLUTEN -->
+
+			<div style="height: 80%; width: 100%;" id="div_gluten_data">
+				<p:outputPanel id="panel_gluten_data">
+					<p:panel header="Glúten" toggleable="true"
+						rendered="#{rotulo_ui.showGluten}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="gluten_som" value="Glúten Desc : " />
+							<p:selectOneMenu id="gluten_som" value="#{rotulo_ui.gluten}">
+								<f:selectItem itemLabel="Select One" itemValue="" />
+								<f:selectItems value="#{rotulo_ui.glutens}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM GLUTEN -->
+			<!-- INICIO INDUSTRIA ORIGEM -->
+
+			<div style="height: 80%; width: 100%;" id="div_industria_origem_data">
+				<p:outputPanel id="panel_industria_origem_data">
+					<p:panel header="Indústria de origem" toggleable="true"
+						rendered="#{rotulo_ui.showIndustriaDeOrigem}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="industria_origem_ita"
+								value="Indústria de origem: " />
+							<p:inputTextarea id="industria_origem_ita" rows="5" cols="60"
+								autoResize="false" value="#{rotulo_ui.industriaDeOrigem}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+
+			<!-- FIM INDUSTRIA ORIGEM -->
+			<!-- INICIO INGREDIENTES -->
+			<div style="height: 80%; width: 100%" id="div_ingredientes_data">
+				<p:outputPanel id="panel_ingrediente_data">
+					<p:panel header="Ingredientes" toggleable="true"
+						rendered="#{rotulo_ui.showIngrediente}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="ingredientes_ita" value="Ingredientes: " />
+							<p:inputTextarea id="ingredientes_ita" rows="5" cols="60"
+								autoResize="false" value="#{rotulo_ui.ingrediente}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+
+
+			<div style="height: 80%; width: 100%;"
+				id="div_tabela_conservacao_data">
+				<p:outputPanel id="panel_tabela_conservacao_data">
+					<p:panel header="Conservação" toggleable="true"
+						rendered="#{rotulo_ui.showValidadeProduto}">
+						<p:panelGrid columns="2">
+							<f:facet name="header">
+								<h:outputText value="Tabela de conservação" />
+							</f:facet>
+
+							<h:outputText value="Validade a -18˚C(freezer):" />
+							<h:outputText value="#{rotulo_ui.validadeFreezer}" />
+
+							<h:outputText value="Validade a -4˚C (congelador):" />
+							<h:outputText value="#{rotulo_ui.validadeCongelador}" />
+
+							<h:outputText value="Validade a 4˚C (refrigerador):" />
+							<h:outputText value="#{rotulo_ui.validadeRefrigerador}" />
+						</p:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM TABELA DE CONSERVACAO -->
+			<!-- INICIO LACTOSE -->
+
+			<div style="height: 80%; width: 100%" id="div_lactose_data">
+				<p:outputPanel id="panel_lactose_data">
+					<p:panel header="Lactose" toggleable="true"
+						rendered="#{rotulo_ui.showLactose}">
+						<div>
+							<p:staticMessage severity="info" summary="INFO!"
+								detail="Queijos c/ maturação > 6m - não !" />
+						</div>
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="lactose_ita" value="Derivados lácteos: "
+								title="queijos c/ maturação > 6m - não" />
+							<p:inputTextarea id="lactose_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.lactose}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM LACTOSE -->
+			<!-- INICIO ALERGICO -->
+			<div style="height: 80%; width: 100%" id="div_alergico_data">
+				<p:outputPanel id="panel_alergico_data">
+					<p:panel header="Alérgicos" toggleable="true"
+						rendered="#{rotulo_ui.showAlergico}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="alergico_ita" value="Inscrição: " />
+							<p:inputTextarea id="alergico_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.descricaoAlergico}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM ALERGICO -->
+			<!-- INICIO GLUTEN E ALERGENOS -->
+			<div style="height: 80%; width: 100%" id="div_alergenos_data">
+				<p:outputPanel id="panel_alergenos_data">
+					<p:panel header="Alergenos" toggleable="true"
+						rendered="#{rotulo_ui.showGlutenAlergenos}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="alergenos_ita" value="Inscrição: " />
+							<p:inputTextarea id="alergenos_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.descricaoGlutenAlergenos}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM GLUTEN E ALERGENOS -->
+
+			<!-- INICIO USO DO PRODUTO -->
+			<div style="height: 80%; width: 100%" id="div_uso_produto_data">
+				<p:outputPanel id="panel_uso_produto_data">
+					<p:panel header="Uso do produto" toggleable="true"
+						rendered="#{rotulo_ui.showUsoProduto}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="uso_produto_ita"
+								value="Intruções de Uso do Produto / Modo de preparo:" />
+							<p:inputTextarea id="uso_produto_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.descricaoUsoProduto}"
+								placeholder="Texto Descritivo" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM USO DO PRODUTO -->
+
+			<!-- INICIO PRODUTOR -->
+			<div style="height: 80%; width: 100%" id="div_produzido_data">
+				<p:outputPanel id="panel_produtor_data">
+					<p:panel header="Produtor" toggleable="true"
+						rendered="#{rotulo_ui.showProduzido}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="produzido_ita" value="Produzido por:" />
+							<p:inputTextarea id="produzido_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.descricaoProduzido}"
+								placeholder="Inserir informações do Produtor" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM PRODUTOR -->
+
+
+			<!-- INICIO DISTRIBUIDOR -->
+			<div style="height: 80%; width: 100%" id="div_distribuidor_data">
+				<p:outputPanel id="panel_distribuidor_data">
+					<p:panel header="Distribuidor" toggleable="true"
+						rendered="#{rotulo_ui.showDistribuido}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="distribuidor_ita" value="Distribuído por:" />
+							<p:inputTextarea id="distribuidor_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.descricaoDistribuido}"
+								placeholder="Inserir informações do Distribuídor" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM DISTRIBUIDOR -->
+
+
+			<!-- INICIO IMPORTADOR -->
+			<div style="height: 80%; width: 100%" id="div_importador_data">
+				<p:outputPanel id="panel_importador_data">
+					<p:panel header="Importador" toggleable="true"
+						rendered="#{rotulo_ui.showImportado}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="importador_ita" value="Importado por:" />
+							<p:inputTextarea id="importador_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.descricaoImportado}"
+								placeholder="Inserir informações do Importador" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM IMPORTADOR -->
+
+			<!-- INICIO IMPORTADOR -->
+			<div style="height: 80%; width: 100%" id="div_data_fabricacao_data">
+				<p:outputPanel id="panel_data_fabricacao_data">
+					<p:panel header="Data de fabricação" toggleable="true"
+						rendered="#{rotulo_ui.showDataFabricacao}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="data_fabricacao_ita"
+								value="Descrição da data de fabricação:" />
+							<p:inputTextarea id="data_fabricacao_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.dataFabricacao}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM IMPORTADOR -->
+
+			<!-- INICIO IMPORTADOR -->
+			<div style="height: 80%; width: 100%" id="div_prazo_validade_data">
+				<p:outputPanel id="panel_prazo_validade_data">
+					<p:panel header="Prazo de validade" toggleable="true"
+						rendered="#{rotulo_ui.showPrazoValidade}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="prazo_validade_ita"
+								value="Descrição do prazo de validade:" />
+							<p:inputTextarea id="prazo_validade_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.prazoValidade}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM IMPORTADOR -->
+			<!-- INICIO IMPORTADOR -->
+			<div style="height: 80%; width: 100%" id="div_lote_data">
+				<p:outputPanel id="panel_lote_data">
+					<p:panel header="Lote" toggleable="true"
+						rendered="#{rotulo_ui.showLote}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="lote_ita" value="Lote:" />
+							<p:inputTextarea id="lote_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.lote}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM IMPORTADOR -->
+			<!-- INICIO IMPORTADOR -->
+			<div style="height: 80%; width: 100%;"
+				id="div_informacao_nutricional_data">
+				<p:outputPanel id="panel_informacao_nutricional_data">
+					<p:panel header="Informação nutricional" toggleable="true"
+						rendered="#{rotulo_ui.showInformacaoNutricional}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="informacao_nutricional_ita"
+								value="Informação nutricional:" />
+							<p:inputTextarea id="informacao_nutricional_ita" rows="2"
+								cols="100" autoResize="false"
+								value="#{rotulo_ui.informacaoNutricional}" />
+						</h:panelGrid>
+						<div class="container-div">
+							<div class="left-div">
+								<h:panelGrid columns="2" cellpadding="5">
+									<f:facet name="header">
+										<p:outputLabel value="Valores Base" />
+									</f:facet>
+
+									<p:outputLabel value="Peso:" />
+									<p:inputNumber
+										value="#{rotulo_ui.calculoNutricional.dadosBase.peso}" />
+
+									<p:outputLabel value="Carboidratos (g):" />
+									<p:inputNumber
+										value="#{rotulo_ui.calculoNutricional.dadosBase.carboidratos}" />
+
+									<p:outputLabel value="Proteínas (g):" />
+									<p:inputNumber
+										value="#{rotulo_ui.calculoNutricional.dadosBase.proteinas}" />
+
+									<p:outputLabel value="Gorduras totais (g):" />
+									<p:inputNumber
+										value="#{rotulo_ui.calculoNutricional.dadosBase.gorduraTotais}" />
+
+									<p:outputLabel value="Gorduras saturadas (g):" />
+									<p:inputNumber
+										value="#{rotulo_ui.calculoNutricional.dadosBase.gordurasSaturadas}" />
+
+									<p:outputLabel value="Gorduras trans (g):" />
+									<p:inputNumber
+										value="#{rotulo_ui.calculoNutricional.dadosBase.gordurasTrans}" />
+
+									<p:outputLabel value="Fibra alimentar (g):" />
+									<p:inputNumber
+										value="#{rotulo_ui.calculoNutricional.dadosBase.fibraAlimentar}" />
+
+									<p:outputLabel value="Sódio (mg):" />
+									<p:inputNumber
+										value="#{rotulo_ui.calculoNutricional.dadosBase.sodio}" />
+								</h:panelGrid>
+
+							</div>
+							<div class="right-div">
+								<table class="pure-table pure-table-bordered">
+									<tr>
+										<th colspan="3" class="text-title-center">Informação
+											Nutricional</th>
+
+									</tr>
+									<tr>
+										<th colspan="3" class="text-right"><p:inputText
+												value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.porcao}"
+												id="otpt-vlr-porcao" /></th>
+									</tr>
+									<tr>
+										<td rowspan="2" style="vertical-align: bottom;">Valor
+											Energético</td>
+										<th>Quantidade por Porção</th>
+										<th class="text-qtd-vd">%VD(*)</th>
+									</tr>
+									<tr>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcao.valorEnergeticoDescritivo} g"
+												id="otpt-vlr-energetico" /></td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.valorEnergetico}"
+												id="otpt-vlr-energetico-vd">
+												<f:convertNumber integerOnly="true" />
+											</p:outputLabel></td>
+									</tr>
+									<tr>
+										<td>Carboidratos</td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcao.carboidratosDesc} g"
+												id="otpt-vlr-carboidratos" /></td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.carboidratos}"
+												id="otpt-vlr-carboidratos-vd">
+												<f:convertNumber integerOnly="true" />
+											</p:outputLabel></td>
+									</tr>
+									<tr>
+										<td>Proteínas</td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcao.proteinasDesc} g"
+												id="otpt-vlr-proteinas" /></td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.proteinas}"
+												id="otpt-vlr-proteinas-vd">
+												<f:convertNumber integerOnly="true" />
+											</p:outputLabel></td>
+									</tr>
+									<tr>
+										<td>Gorduras Totais</td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcao.gorduraTotaisDesc} g"
+												id="otpt-vlr-gordura-totais" /></td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.gorduraTotais}"
+												id="otpt-vlr-gordura-totais-vd">
+												<f:convertNumber integerOnly="true" />
+											</p:outputLabel></td>
+									</tr>
+									<tr>
+										<td>Gorduras Saturadas</td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcao.gordurasSaturadasDesc} g"
+												id="otpt-vlr-gordura-saturadas" /></td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.gordurasSaturadas}"
+												id="otpt-vlr-gordura-saturadas-vd">
+												<f:convertNumber integerOnly="true" />
+											</p:outputLabel></td>
+									</tr>
+									<tr>
+										<td>Gorduras Trans</td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcao.gordurasTransDesc} g"
+												id="otpt-vlr-gordura-trans" /></td>
+										<td class="text-qtd-vd">**</td>
+									</tr>
+									<tr>
+										<td>Fibra Alimentar</td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcao.fibraAlimentarDesc} g"
+												id="otpt-vlr-fibra-alimentar" /></td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.fibraAlimentar}"
+												id="otpt-vlr-fibra-alimentar-vd">
+												<f:convertNumber integerOnly="true" />
+											</p:outputLabel></td>
+									</tr>
+									<tr>
+										<td>Sódio</td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcao.sodioDesc} mg"
+												id="otpt-vlr-sodio" /></td>
+										<td class="text-qtd-vd"><p:outputLabel
+												value="#{rotulo_ui.calculoNutricional.dadosPorcaoVD.sodio} "
+												id="otpt-vlr-sodio-vd">
+												<f:convertNumber integerOnly="true" />
+											</p:outputLabel></td>
+									</tr>
+									<tr>
+										<td colspan="3">(*) Valores Diários de referência com
+											base em uma dieta de 2000kcal ou 8400kJ. Seus valores diários
+											podem ser maiores ou menores dependendo das necessidades
+											energéticas.(**) VD não estabelecido.</td>
+									</tr>
+								</table>
+
+							</div>
+							<div></div>
+
+
+
+							<div style="border-top: 1px solid gray; padding-top: 10px;">
+								<h:panelGrid columns="3" cellpadding="5"
+									id="panel_grid_porcao_nutricional">
+									<p:outputLabel value="Peso da porção:" />
+									<p:inputNumber
+										value="#{rotulo_ui.calculoNutricional.dadosPorcao.peso}" />
+									<p:commandButton value="Calcular Porção" id="ajax"
+										update="panel_grid_porcao_nutricional otpt-vlr-energetico otpt-vlr-energetico-vd otpt-vlr-carboidratos otpt-vlr-carboidratos-vd otpt-vlr-proteinas otpt-vlr-proteinas-vd otpt-vlr-gordura-totais otpt-vlr-gordura-totais-vd otpt-vlr-gordura-saturadas-vd otpt-vlr-gordura-saturadas otpt-vlr-gordura-trans otpt-vlr-fibra-alimentar-vd otpt-vlr-fibra-alimentar otpt-vlr-sodio-vd otpt-vlr-sodio"
+										action="#{rotulo_ui.calcularPorcao}"
+										style="margin-right:20px;" styleClass="ui-priority-primary" />
+								</h:panelGrid>
+							</div>
+
+						</div>
+
+					</p:panel>
+				</p:outputPanel>
+			</div>
+
+			<div style="height: 80%; width: 100%" id="div_tartrazina_data">
+				<p:outputPanel id="panel_tartrazina_data">
+					<p:panel header="Tartrazina" toggleable="true"
+						rendered="#{rotulo_ui.showTartrazina}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="tartrazina_ita"
+								value="Informação tartrazina:" />
+							<p:inputTextarea id="tartrazina_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.tartrazina}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+
+			<div style="height: 80%; width: 100%" id="div_fenilalanina_data">
+				<p:outputPanel id="panel_fenilalanina_data">
+					<p:panel header="Aspartame ou fenilalanina" toggleable="true"
+						rendered="#{rotulo_ui.showFenilalanina}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="fenilalanina_ita"
+								value="Aspartame ou fenilalanina:" />
+							<p:inputTextarea id="fenilalanina_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.fenilalanina}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+
+			<div style="height: 80%; width: 100%" id="div_sac_data">
+				<p:outputPanel id="panel_sac_data">
+					<p:panel header="Informação SAC" toggleable="true"
+						rendered="#{rotulo_ui.showSac}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="sac_ita" value="Informação SAC:" />
+							<p:inputTextarea id="sac_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.sac}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+
+			<div style="height: 80%; width: 100%" id="div_transgenico_data">
+				<p:outputPanel id="panel_transgenico_data">
+					<p:panel header="Informação transgênico" toggleable="true"
+						rendered="#{rotulo_ui.showTransgenico}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="transgenico_ita"
+								value="Informação transgênico:" />
+							<p:inputTextarea id="transgenico_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.transgenico}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+
+			<div style="height: 80%; width: 100%" id="div_registro_data">
+				<p:outputPanel id="panel_registro_data">
+					<p:panel header="Registro MAPA" toggleable="true"
+						rendered="#{rotulo_ui.showRegistro}">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="registro_ita" value="MAPA:" />
+							<p:inputTextarea id="registro_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.registro}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM IMPORTADOR -->
+			</p:outputPanel>			
+		</div>
+	</h:form>
+</h:body>
+</html>

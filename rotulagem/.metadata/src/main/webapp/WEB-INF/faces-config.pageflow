@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf15749672968310" configfile="/rotulagem/src/main/webapp/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="*" id="pf157496925371718" outlinks="pf157496925371719 pf157496925371720" path="*"/>
+  <nodes xsi:type="pageflow:PFPage" name="report.jsf" id="pf157496925371721" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" inlinks="pf157496925371719" path="report.jsf"/>
+  <nodes xsi:type="pageflow:PFPage" name="index.jsf" id="pf157496925371722" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf157496925371720" path="index.jsf"/>
+  <links id="pf157496925371719" target="pf157496925371721" source="pf157496925371718" outcome="report" redirect="true"/>
+  <links id="pf157496925371720" target="pf157496925371722" source="pf157496925371718" outcome="home" redirect="true"/>
+</pageflow:Pageflow>
