@@ -30,6 +30,8 @@ function toggle(idComponent){
 
 function generatePDF () {
 	
+	window.print();
+	/**
 	var doc = new jsPDF();
 	
     doc.fromHTML($('#content').html(), 15, 15, {
@@ -37,4 +39,5 @@ function generatePDF () {
             'elementHandlers': specialElementHandlers
     });
     doc.save('registroIn-rotulo.pdf');
+    **/
 }
