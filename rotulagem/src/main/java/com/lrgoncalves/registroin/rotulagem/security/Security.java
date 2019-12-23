@@ -19,7 +19,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class Security {
 
 	/**
-	 * @param args
+	 * @param argsO
 	 */
 	public static void main(String[] args) {
 		String token = null;

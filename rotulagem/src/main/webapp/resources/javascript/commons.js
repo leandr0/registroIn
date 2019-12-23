@@ -17,27 +17,19 @@ function hideDiv(idDiv){
 	jQuery(idDiv).hide();
 }
 
+function hideLoading(idDiv){
+	jQuery(idDiv).delay(2000).hide();
+}
+
 function showDiv(idDiv){
-	jQuery(showDiv).fadeIn(1500);
+	jQuery(idDiv).show();
 }
 
 function toggle(idComponent){
 	jQuery(idComponent).toggle();
 }
 
-
-
-
 function generatePDF () {
 	
 	window.print();
-	/**
-	var doc = new jsPDF();
-	
-    doc.fromHTML($('#content').html(), 15, 15, {
-        'width': 170,
-            'elementHandlers': specialElementHandlers
-    });
-    doc.save('registroIn-rotulo.pdf');
-    **/
 }

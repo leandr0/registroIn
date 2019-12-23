@@ -1,3 +1,7 @@
 http://www.mastertheboss.com/javaee/mongodb/3-ways-you-can-connect-to-mongodb-from-wildfly-jboss-eap
 https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
 ./mongod --dbpath ../../../data/db
+
+git fetch --all
+git reset --hard origin/master
+git pull origin master
