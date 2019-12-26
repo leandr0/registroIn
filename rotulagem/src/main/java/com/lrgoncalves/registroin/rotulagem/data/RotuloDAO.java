@@ -4,6 +4,7 @@
 package com.lrgoncalves.registroin.rotulagem.data;
 
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,12 @@ import com.mongodb.client.model.Filters;
  *
  */
 @Model
-public class RotuloDAO {
+public class RotuloDAO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8806186280696615791L;
 
 	@Inject
 	transient MongoClient mongoClient;
@@ -87,30 +93,134 @@ public class RotuloDAO {
 			
 			rotulo.append("_id", model.getId());
 			rotulo.append("data", model.getData());
-			rotulo.append("informacao_nutricional", buildInformacaoNutricional(model.getInformacaoNutricional()));
-			rotulo.append("cliente", buildCliente(model.getClient()));
-			rotulo.append("denominacao_produto", buildSimpleObject(model.getDenominacaoProduto()));
-			rotulo.append("conservacao_produto", buildConservacaoProduto(model.getConservacaoProduto()));
-			rotulo.append("distribuidor", buildSimpleObject(model.getDistribuidor()));
-			rotulo.append("tartrazina", buildSimpleObject(model.getTartrazina()));
-			rotulo.append("aromatizante", buildSimpleObject(model.getAromatizante()));
-			rotulo.append("derivados_lacteos", buildSimpleObject(model.getDerivadosLacteos()));
-			rotulo.append("importador", buildSimpleObject(model.getImportador()));
-			rotulo.append("aspartame_fenilalanina", buildSimpleObject(model.getAspartameFenilalanina()));
-			rotulo.append("peso_liquido", buildPesoLiquido(model.getPesoLiquido()));
-			rotulo.append("alergicos", buildSimpleObject(model.getAlergicos()));
-			rotulo.append("data_fabricacao", buildSimpleObject(model.getDataFabricacao()));
-			rotulo.append("sac", buildSimpleObject(model.getSac()));
-			rotulo.append("gluten", buildSimpleObject(model.getGluten()));
-			rotulo.append("gluten_alergenos", buildSimpleObject(model.getGlutenAlergenos()));
-			rotulo.append("prazo_validade", buildSimpleObject(model.getPrazoValidade()));
-			rotulo.append("transgenico", buildSimpleObject(model.getTransgenico()));
-			rotulo.append("industria_origem", buildSimpleObject(model.getIndustriaOrigem()));
-			rotulo.append("uso_produto", buildSimpleObject(model.getUsoProduto()));
-			rotulo.append("lote", buildSimpleObject(model.getLote()));
-			rotulo.append("registro_mapa", buildSimpleObject(model.getRegistroMAPA()));
-			rotulo.append("ingredientes", buildSimpleObject(model.getIngredientes()));
-			rotulo.append("produtor", buildSimpleObject(model.getProdutor()));
+			
+			try {
+				rotulo.append("informacao_nutricional", buildInformacaoNutricional(model.getInformacaoNutricional()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			
+			try {
+				rotulo.append("cliente", buildCliente(model.getClient()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			
+			try {
+				rotulo.append("denominacao_produto", buildSimpleObject(model.getDenominacaoProduto()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			
+			try {
+				rotulo.append("conservacao_produto", buildConservacaoProduto(model.getConservacaoProduto()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			
+			try {
+				rotulo.append("distribuidor", buildSimpleObject(model.getDistribuidor()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			
+			try {
+				rotulo.append("tartrazina", buildSimpleObject(model.getTartrazina()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			
+			try {
+				rotulo.append("aromatizante", buildSimpleObject(model.getAromatizante()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			
+			try {
+				rotulo.append("derivados_lacteos", buildSimpleObject(model.getDerivadosLacteos()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("importador", buildSimpleObject(model.getImportador()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("aspartame_fenilalanina", buildSimpleObject(model.getAspartameFenilalanina()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("peso_liquido", buildPesoLiquido(model.getPesoLiquido()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("alergicos", buildSimpleObject(model.getAlergicos()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("data_fabricacao", buildSimpleObject(model.getDataFabricacao()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("sac", buildSimpleObject(model.getSac()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("gluten", buildSimpleObject(model.getGluten()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("gluten_alergenos", buildSimpleObject(model.getGlutenAlergenos()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("prazo_validade", buildSimpleObject(model.getPrazoValidade()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("transgenico", buildSimpleObject(model.getTransgenico()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("industria_origem", buildSimpleObject(model.getIndustriaOrigem()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("uso_produto", buildSimpleObject(model.getUsoProduto()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("lote", buildSimpleObject(model.getLote()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("registro_mapa", buildSimpleObject(model.getRegistroMAPA()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("ingredientes", buildSimpleObject(model.getIngredientes()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("produtor", buildSimpleObject(model.getProdutor()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
 			
 			collection.insertOne(rotulo);
 			
@@ -126,6 +236,9 @@ public class RotuloDAO {
 
 	
 	public Document buildSimpleObject(final SimpleObject model) {
+		
+		if(model == null)
+			throw new IllegalArgumentException("Invalid object!");
 	
 		Document document = new Document();
 		document.append("descricao", model.getDescricao());
@@ -134,6 +247,9 @@ public class RotuloDAO {
 	}
 	
 	public Document buildPesoLiquido(final PesoLiquido model) {
+		
+		if(model == null)
+			throw new IllegalArgumentException("Invalid object!");
 		
 		Document document = new Document();
 		document.append("descricao", model.getDescricao());
@@ -144,6 +260,9 @@ public class RotuloDAO {
 	
 	public Document buildConservacaoProduto(final ConservacaoProduto model) {
 		
+		if(model == null)
+			throw new IllegalArgumentException("Invalid object!");
+		
 		Document document = new Document();
 		document.append("validade_produto", model.getValidadeProduto());
 		
@@ -151,6 +270,9 @@ public class RotuloDAO {
 	}
 	
 	public Document buildCliente(final Client model) {
+		
+		if(model == null)
+			throw new IllegalArgumentException("Invalid object!");
 		
 		Document document = new Document();
 		document.append("nome", model.getNome());
@@ -162,6 +284,9 @@ public class RotuloDAO {
 	
 	
 	private Document buildQuantidadeNutricional(final QuantidadeNutricional model) {
+		
+		if(model == null)
+			throw new IllegalArgumentException("Invalid object!");
 		
 		Document document = new Document();
 		
@@ -193,6 +318,9 @@ public class RotuloDAO {
 	
 	public Document buildInformacaoNutricional(final InformacaoNutricional model) {
 		
+		if(model == null)
+			throw new IllegalArgumentException("Invalid object!");
+		
 		Document document = new Document();
 		
 		document.append("descricao", model.getDescricao());
@@ -214,36 +342,136 @@ public class RotuloDAO {
 		
 		rotulo.setId(document.getString("_id"));
 		rotulo.setData(document.getString("data"));
-		rotulo.setInformacaoNutricional(buildInformacaoNutricional((Document) document.get("informacao_nutricional")));
-		rotulo.setClient(buildCliente((Document) document.get("cliente")));
-		rotulo.setDenominacaoProduto(buildSimpleObject((Document) document.get("denominacao_produto")));
-		rotulo.setConservacaoProduto(buildConservacaoProduto((Document) document.get("conservacao_produto")));
-		rotulo.setDistribuidor(buildSimpleObject((Document) document.get("distribuidor")));
-		rotulo.setTartrazina(buildSimpleObject((Document) document.get("tartrazina")));
-		rotulo.setAromatizante(buildSimpleObject((Document) document.get("aromatizante")));
-		rotulo.setDerivadosLacteos(buildSimpleObject((Document) document.get("derivados_lacteos")));
-		rotulo.setImportador( buildSimpleObject((Document) document.get("importador")));
-		rotulo.setAspartameFenilalanina(buildSimpleObject((Document) document.get("aspartame_fenilalanina")));
-		rotulo.setPesoLiquido(buildPesoLiquido((Document) document.get("peso_liquido")));
-		rotulo.setAlergicos(buildSimpleObject((Document) document.get("alergicos")));
-		rotulo.setDataFabricacao(buildSimpleObject((Document) document.get("data_fabricacao")));
-		rotulo.setSac(buildSimpleObject((Document) document.get("sac")));
-		rotulo.setGluten(buildSimpleObject((Document) document.get("gluten")));
-		rotulo.setGlutenAlergenos(buildSimpleObject((Document) document.get("gluten_alergenos")));
-		rotulo.setPrazoValidade(buildSimpleObject((Document) document.get("prazo_validade")));
-		rotulo.setTransgenico(buildSimpleObject((Document) document.get("transgenico")));
-		rotulo.setIndustriaOrigem(buildSimpleObject((Document) document.get("industria_origem")));
-		rotulo.setUsoProduto( buildSimpleObject((Document) document.get("uso_produto")));
-		rotulo.setLote( buildSimpleObject((Document) document.get("lote")));
-		rotulo.setRegistroMAPA(buildSimpleObject((Document) document.get("registro_mapa")));
-		rotulo.setIngredientes(buildSimpleObject((Document) document.get("ingredientes")));
-		rotulo.setProdutor(buildSimpleObject((Document) document.get("produtor")));
+		
+		try {
+			rotulo.setInformacaoNutricional(buildInformacaoNutricional((Document) document.get("informacao_nutricional")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setClient(buildCliente((Document) document.get("cliente")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setDenominacaoProduto(buildSimpleObject((Document) document.get("denominacao_produto")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setConservacaoProduto(buildConservacaoProduto((Document) document.get("conservacao_produto")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setDistribuidor(buildSimpleObject((Document) document.get("distribuidor")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setTartrazina(buildSimpleObject((Document) document.get("tartrazina")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setAromatizante(buildSimpleObject((Document) document.get("aromatizante")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setDerivadosLacteos(buildSimpleObject((Document) document.get("derivados_lacteos")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setImportador( buildSimpleObject((Document) document.get("importador")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setAspartameFenilalanina(buildSimpleObject((Document) document.get("aspartame_fenilalanina")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setPesoLiquido(buildPesoLiquido((Document) document.get("peso_liquido")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setAlergicos(buildSimpleObject((Document) document.get("alergicos")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setDataFabricacao(buildSimpleObject((Document) document.get("data_fabricacao")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setSac(buildSimpleObject((Document) document.get("sac")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setGluten(buildSimpleObject((Document) document.get("gluten")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setGlutenAlergenos(buildSimpleObject((Document) document.get("gluten_alergenos")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setPrazoValidade(buildSimpleObject((Document) document.get("prazo_validade")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setTransgenico(buildSimpleObject((Document) document.get("transgenico")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setIndustriaOrigem(buildSimpleObject((Document) document.get("industria_origem")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setUsoProduto( buildSimpleObject((Document) document.get("uso_produto")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setLote( buildSimpleObject((Document) document.get("lote")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setRegistroMAPA(buildSimpleObject((Document) document.get("registro_mapa")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setIngredientes(buildSimpleObject((Document) document.get("ingredientes")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setProdutor(buildSimpleObject((Document) document.get("produtor")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
 		
 		return rotulo;
 	}
 	
 	
 	private  PesoLiquido buildPesoLiquido(Document document) {
+		
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
 		
 		PesoLiquido model = new PesoLiquido();
 		model.setDescricao(document.getString("descricao"));
@@ -255,6 +483,9 @@ public class RotuloDAO {
 	@SuppressWarnings("unchecked")
 	private  ConservacaoProduto buildConservacaoProduto(Document document) {
 		
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
+		
 		ConservacaoProduto model = new ConservacaoProduto();
 		model.setValidadeProduto(((Map<String, String>) document.get("validade_produto")));
 		
@@ -263,6 +494,9 @@ public class RotuloDAO {
 	
 	private  SimpleObject buildSimpleObject(Document document) {
 		
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
+		
 		SimpleObject model = new SimpleObject();
 		model.setDescricao(document.getString("descricao"));
 		
@@ -270,6 +504,9 @@ public class RotuloDAO {
 	}
 	
 	private  Client buildCliente(Document document) {
+		
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
 		
 		Client model = new Client();
 		model.setNome(document.getString("nome"));
@@ -282,6 +519,9 @@ public class RotuloDAO {
 	
 	private  InformacaoNutricional buildInformacaoNutricional(Document document) {
 
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
+		
 		InformacaoNutricional model = new InformacaoNutricional();
 
 		model.setDescricao(document.getString("descricao"));
@@ -301,6 +541,9 @@ public class RotuloDAO {
 	}
 
 	private  QuantidadeNutricional buildQuantidadeNutricional(Document document) {
+		
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
 		
 		QuantidadeNutricional model = new QuantidadeNutricional();
 		

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lrgoncalves.registroin.rotulagem;
+package com.lrgoncalves.registroin.rotulagem.ui;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,10 +13,9 @@ import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.lrgoncalves.registroin.rotulagem.data.RotuloDAO;
+import com.lrgoncalves.registroin.rotulagem.CalculoNutricional;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
 import com.lrgoncalves.registroin.rotulagem.data.entity.SimpleObject;
 import com.lrgoncalves.registroin.rotulagem.model.Report;
@@ -27,17 +26,14 @@ import com.lrgoncalves.registroin.rotulagem.model.Report;
  */
 @Named(value = "rotulo_ui")
 @SessionScoped
-public class RotuloView extends AbstractBean {
+public class RotuloView extends AbstractView {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -775136288232260398L;
+	private static final long serialVersionUID = -8109077535076649925L;
 
 	private static final Logger LOGGER = Logger.getLogger(RotuloView.class.getName());
-
-	@Inject
-	RotuloDAO rotulos;
 
 	private Rotulo rotulo;
 
@@ -104,27 +100,33 @@ public class RotuloView extends AbstractBean {
 		
 		rotulo = new Rotulo();
 
+		
+		final String aromatizanteLegislacao = "Conforme o informe técnico 26-07 ANVISA, ";
+		
 		aromatizantes = new ArrayList<String>();
-		aromatizantes.add("Inserir o termo \"CONTÉM AROMATIZANTE\" no painel principal. Em caixa alta.");
-		aromatizantes
-				.add("Inserir o termo \"AROMATIZADO ARTIFICIALMENTE\" no painel principal. Em caixa alta e negrito.");
-		aromatizantes.add(
-				"Inserir o termo \"Contém aromatizante sintético idêntico ao natural\" no painel principal. Em negrito.");
+		aromatizantes.add(aromatizanteLegislacao+"nserir o termo \"CONTÉM AROMATIZANTE\" no painel principal. Em caixa alta.");
+		aromatizantes.add(aromatizanteLegislacao+"inserir o termo \"AROMATIZADO ARTIFICIALMENTE\" no painel principal. Em caixa alta e negrito.");
+		aromatizantes.add(aromatizanteLegislacao+"inserir o termo \"Contém aromatizante sintético idêntico ao natural\" no painel principal. Em negrito.");
 
-		rotulo.setDenominacaoProduto(new SimpleObject("Sugerimos adequar a denominação do produto para ...."));
+		rotulo.setDenominacaoProduto(new SimpleObject("A denominação do produto deve estar no painel principal do rótulo. Sugerimos adequar a denominação do produto para ...."));
 		rotulo.setIndustriaOrigem(new SimpleObject("Acrescentar os termos : - \"Indústria <País de Origem>\""));
 
+		final String glutenLegislacao = "De acordo com a Lei 10674-03, ";
+		
 		glutens = new ArrayList<String>();
-		glutens.add(
-				"Inserir a inscrição \"NÃO CONTÉM GLÚTEN\" logo após a lista de ingredientes. Em caixa alta e negrito.");
-		glutens.add(
-				"Inserir a inscrição \"CONTÉM GLÚTEN\" logo após a lista de ingredientes. Em caixa alta e negrito.");
+		glutens.add(glutenLegislacao+"inserir a inscrição \"NÃO CONTÉM GLÚTEN\" logo após a lista de ingredientes. Em caixa alta e negrito.");
+		glutens.add(glutenLegislacao+"inserir a inscrição \"CONTÉM GLÚTEN\" logo após a lista de ingredientes. Em caixa alta e negrito.");
 
+		
+		final String derivadosLacteosLegislacao = "De acordo com a RDC 136-17 ANVISA, ";
+		
 		rotulo.setDerivadosLacteos(new SimpleObject(
-				"Inserir a inscrição \"CONTÉM LACTOSE\" logo após a inscrição \"NÃO CONTÉM GLÚTEN\". Em negrito e caixa alta."));
+				derivadosLacteosLegislacao+"inserir a inscrição \"CONTÉM LACTOSE\" logo após a inscrição \"NÃO CONTÉM GLÚTEN\". Em negrito e caixa alta."));
+		
 		rotulo.setAlergicos(new SimpleObject(
-				"Inserir a inscrição \"ALÉRGICOS: CONTÉM XXXXX E DERIVADOS DE XXXXX\", em caixa alta e negrito, logo após a inscrição \"NÃO CONTÉM GLÚTEN\""));
+				derivadosLacteosLegislacao+"inserir a inscrição \"ALÉRGICOS: CONTÉM XXXXX E DERIVADOS DE XXXXX\", em caixa alta e negrito, logo após a inscrição \"NÃO CONTÉM GLÚTEN\""));
 
+		
 		rotulo.setProdutor(new SimpleObject("Inserir informações completas do produtor (nome e endereço)"));
 
 		rotulo.setImportador(new SimpleObject("Inserir informações do Importador"));
@@ -133,15 +135,16 @@ public class RotuloView extends AbstractBean {
 
 		rotulo.setUsoProduto(new SimpleObject("Texto Descritivo"));
 
-		final String validade = "DD/MM/AA";
+		final String validadeConservacao = "DD/MM/AA";
 
 		Map<String, String> conservacaoProduto = new LinkedHashMap<String, String>();
 
-		conservacaoProduto.put("Validade a -18˚C(freezer):", validade);
-		conservacaoProduto.put("Validade a -4˚C (congelador):", validade);
-		conservacaoProduto.put("Validade a 4˚C (refrigerador):", validade);
+		conservacaoProduto.put("Validade a -18˚C(freezer):"		, validadeConservacao);
+		conservacaoProduto.put("Validade a -4˚C (congelador):"	, validadeConservacao);
+		conservacaoProduto.put("Validade a 4˚C (refrigerador):"	, validadeConservacao);
 
 		rotulo.getConservacaoProduto().setValidadeProduto(conservacaoProduto);
+		
 		rotulo.setAlergicos(new SimpleObject(
 				"Inserir a inscrição \"ALÉRGICOS: CONTÉM XXXXX E DERIVADOS DE XXXXX\", em caixa alta e negrito, logo após a inscrição \"NÃO CONTÉM GLÚTEN\""));
 		rotulo.setGlutenAlergenos(new SimpleObject(
@@ -177,6 +180,12 @@ public class RotuloView extends AbstractBean {
 
 		setSelectAll(false);
 		handleBooleanValues(isSelectAll());
+		
+		LOGGER.info((String) getAttributeInSession("nome"));
+		
+		rotulo.getClient().setNome((String) getAttributeInSession("nome"));
+		rotulo.getClient().setProduto((String) getAttributeInSession("produto"));
+		rotulo.getClient().setEmail((String) getAttributeInSession("email"));
 	}
 
 	public void calcularPorcao() {
@@ -190,7 +199,8 @@ public class RotuloView extends AbstractBean {
 		final double gordurasTotais = Double
 				.valueOf(rotulo.getInformacaoNutricional().getQtdPorcao().getGordurasTotais()).doubleValue();
 
-		final double vlrEnergeticoKj = calculoNutricional.calculoValoEnergeticoKj(carboidratos, proteinas,
+		final double vlrEnergeticoKj = calculoNutricional.
+				calculoValoEnergeticoKj(carboidratos, proteinas,
 				gordurasTotais);
 		final double vlrEnergeticoKcal = calculoNutricional.calculoValoEnergeticoKcal(carboidratos, proteinas,
 				gordurasTotais);
@@ -207,18 +217,21 @@ public class RotuloView extends AbstractBean {
 
 		final int pesoLiquido = Integer.valueOf(rotulo.getPesoLiquido().getPeso());
 
+		
+		final String pesoLiquidoLegislacao = "De acordo com a portaria INMETRO 157-02, ";
+		
 		if (pesoLiquido <= 50) {
 			rotulo.getPesoLiquido().setDescricao(
-					"Os números devem ter altura mínima de 2 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral.");
+					pesoLiquidoLegislacao+"os números devem ter altura mínima de 2 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral.");
 		} else if (pesoLiquido > 50 && pesoLiquido <= 200) {
 			rotulo.getPesoLiquido().setDescricao(
-					"Os números devem ter altura mínima de 3 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral.");
+					pesoLiquidoLegislacao+"os números devem ter altura mínima de 3 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral.");
 		} else if (pesoLiquido > 200 && pesoLiquido <= 1000) {
 			rotulo.getPesoLiquido().setDescricao(
-					"Os números devem ter altura mínima de 4 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral.");
+					pesoLiquidoLegislacao+"os números devem ter altura mínima de 4 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral.");
 		} else if (pesoLiquido > 1000) {
 			rotulo.getPesoLiquido().setDescricao(
-					"Os números devem ter altura mínima de 6 mm, e a unidade \"kg\", altura mínima de 2/3 o tamanho do numeral.");
+					pesoLiquidoLegislacao+"os números devem ter altura mínima de 6 mm, e a unidade \"kg\", altura mínima de 2/3 o tamanho do numeral.");
 		}
 	}
 
@@ -374,7 +387,90 @@ public class RotuloView extends AbstractBean {
 
 		try {
 
-			rotulos.persistRotulo(rotulo);
+			if (!getDenominacaoProduto().isCheck()) {
+				rotulo.setDenominacaoProduto(null);
+			}
+			if (!getAromatizante().isCheck()) {
+				rotulo.setAromatizante(null);
+			}
+			if (!getPesoLiquido().isCheck()) {
+				rotulo.setPesoLiquido(null);
+			}
+			if (!getGluten().isCheck()) {
+				rotulo.setGluten(null);
+			}
+			if (!getIndustriaOrigem().isCheck()) {
+				rotulo.setIndustriaOrigem(null);
+			}
+			if (!getIngredientes().isCheck()) {
+				rotulo.setIngredientes(null);
+			}
+			if (!getLactose().isCheck()) {
+				rotulo.setDerivadosLacteos(null);
+			}
+			if (!getAlergico().isCheck()) {
+				rotulo.setAlergicos(null);
+			}
+			if (!getProdutor().isCheck()) {
+				rotulo.setProdutor(null);
+			}
+			if (!getDistribuidor().isCheck()) {
+				rotulo.setDistribuidor(null);
+			}
+			if (!getImportador().isCheck()) {
+				rotulo.setImportador(null);
+			}
+			if (!getDataFabricacao().isCheck()) {
+				rotulo.setDataFabricacao(null);
+			}
+
+			if (!getPrazoValidade().isCheck()) {
+				rotulo.setPrazoValidade(null);
+			}
+
+			if (!getLote().isCheck()) {
+				rotulo.setLote(null);
+			}
+
+			if (!getGlutenAlergenos().isCheck()) {
+				rotulo.setGlutenAlergenos(null);
+			}
+
+			if (!getUsoProduto().isCheck()) {
+				rotulo.setUsoProduto(null);
+			}
+
+			if (!getValidadeProduto().isCheck()) {
+				rotulo.setPrazoValidade(null);
+			}
+
+			if (!getInformacaoNutricional().isCheck()) {
+				rotulo.setInformacaoNutricional(null);
+			}
+
+			if (!getTartrazina().isCheck()) {
+				rotulo.setTartrazina(null);
+			}
+
+			if (!getFenilalanina().isCheck()) {
+				rotulo.setAspartameFenilalanina(null);
+			}
+
+			if (!getSac().isCheck()) {
+				rotulo.setSac(null);
+			}
+
+			if (!getTransgenico().isCheck()) {
+				rotulo.setTransgenico(null);
+			}
+
+			if (!getRegistroMAPA().isCheck()) {
+				rotulo.setRegistroMAPA(null);
+			}
+
+			
+			
+			rotuloDataAccess.persistRotulo(rotulo);
 			init();
 
 			return "home";
@@ -510,14 +606,6 @@ public class RotuloView extends AbstractBean {
 
 	public void setRotulo(Rotulo rotulo) {
 		this.rotulo = rotulo;
-	}
-
-	public RotuloDAO getRotulos() {
-		return rotulos;
-	}
-
-	public void setRotulos(RotuloDAO rotulos) {
-		this.rotulos = rotulos;
 	}
 
 	public SimpleView getDenominacaoProduto() {

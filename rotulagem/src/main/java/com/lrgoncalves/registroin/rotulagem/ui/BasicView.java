@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lrgoncalves.registroin.rotulagem;
+package com.lrgoncalves.registroin.rotulagem.ui;
 
 import java.io.Serializable;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lrgoncalves.registroin.rotulagem;
+package com.lrgoncalves.registroin.rotulagem.ui;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -15,7 +15,7 @@ import com.lrgoncalves.registroin.rotulagem.model.Report;
  */
 @Named(value ="report_ui")
 @SessionScoped
-public class ReportView extends AbstractBean {
+public class ReportView extends AbstractView {
 
 	/**
 	 * 

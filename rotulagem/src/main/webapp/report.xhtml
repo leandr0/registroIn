@@ -34,6 +34,7 @@
                 <p:commandButton action="#{rotulo_ui.save}" value="Save" onclick="showDiv('#loading-overlay');" oncomplete="hideLoading('#loading-overlay')">
                 </p:commandButton>
 			<div style="height: 80%; width: 80%;" id="div_report_data">
+			
 				<div id="os_information" align="center">
 						<table class="pure-table pure-table-bordered" style="width:100%">
 							<tr>
@@ -51,7 +52,6 @@
 								<th style="text-align:left"><p:outputLabel value="Data: " /></th>
 								<td><h:outputText id="data_im" value="#{rotulo_ui.rotulo.data}" /></td>
 							</tr>
-
 						</table>
 				</div>
 				
@@ -171,12 +171,11 @@
 					<p:outputLabel for="uso_produto_ita"
 						value="#{rotulo_ui.validadeProduto.index}. "
 						rendered="#{rotulo_ui.validadeProduto.check}" class="report-index" />
-					<p:panel rendered="#{rotulo_ui.validadeProduto.check}" style="border:0px;padding:0px; margin:0px;" id="panel_validade_produto">
 						
+					<p:panel rendered="#{rotulo_ui.validadeProduto.check}" style="border:0px;padding:0px; margin:0px;" id="panel_validade_produto">
 						<h:outputText value="Inserir informações de conservação conforme tabela abaixo:" style="border:0px;padding:0px; margin:0px;" id="test_02"/>
 						
-						<p:panelGrid columns="2" style="margin:10px 0px 0px 0px"
-							rendered="#{rotulo_ui.validadeProduto.check}" id="test_03">
+						<p:panelGrid columns="2" style="margin:10px 0px 0px 0px" rendered="#{rotulo_ui.validadeProduto.check}" id="test_03">
 							<h:outputText value="Validade a -18˚C(freezer):"
 								class="report-index" />
 							<h:outputText value="#{rotulo_ui.rotulo.conservacaoProduto.validadeProduto['Validade a -18˚C(freezer):']}" />

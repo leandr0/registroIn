@@ -1,13 +1,16 @@
-package com.lrgoncalves.registroin.rotulagem;
+package com.lrgoncalves.registroin.rotulagem.ui;
 
 import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
-public abstract class AbstractBean implements Serializable{
+import com.lrgoncalves.registroin.rotulagem.data.RotuloDAO;
+
+public abstract class AbstractView implements Serializable{
 
 	
 	/**
@@ -15,14 +18,16 @@ public abstract class AbstractBean implements Serializable{
 	 */
 	private static final long serialVersionUID = 7240503216295752718L;
 
+	@Inject
+	protected RotuloDAO rotuloDataAccess;
+
 	protected HttpSession session;
 	
 	protected String nomeUsuario;
 	
 	protected String chaveServico;
-	
 
-	public AbstractBean() {
+	public AbstractView() {
 		createNewSession();
 	}
 
@@ -90,5 +95,21 @@ public abstract class AbstractBean implements Serializable{
 
 	public void setChaveServico(String chaveServico) {
 		this.chaveServico = chaveServico;
+	}
+
+	public RotuloDAO getRotuloDataAccess() {
+		return rotuloDataAccess;
+	}
+
+	public void setRotuloDataAccess(RotuloDAO rotuloDataAccess) {
+		this.rotuloDataAccess = rotuloDataAccess;
+	}
+
+	public String getNomeUsuario() {
+		return nomeUsuario;
+	}
+
+	public String getChaveServico() {
+		return chaveServico;
 	}
 }

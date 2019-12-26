@@ -16,7 +16,7 @@ public abstract class AbstractNutricionalCalculation implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1024618596768504670L;
+	private static final long serialVersionUID = -8107640884483168979L;
 
 	/**
 	 * 
@@ -25,7 +25,7 @@ public abstract class AbstractNutricionalCalculation implements Serializable{
 	 * @param gordurasTotais
 	 * @return @double
 	 */
-	protected  double calculoValoEnergeticoKcal(final double carboidratos, final double proteinas, final double gordurasTotais) {
+	public  double calculoValoEnergeticoKcal(final double carboidratos, final double proteinas, final double gordurasTotais) {
 
 		double carboidratosCalculado = BigDecimal.valueOf(carboidratos * 4).setScale(3, RoundingMode.HALF_EVEN)
 				.doubleValue();
@@ -49,7 +49,7 @@ public abstract class AbstractNutricionalCalculation implements Serializable{
 	 * @param razao
 	 * @return @double
 	 */
-	protected  String calculoBaseDesc(double total, double porcao, double razao) {
+	public  String calculoBaseDesc(double total, double porcao, double razao) {
 
 		double part = BigDecimal.valueOf(total * porcao).setScale(3, RoundingMode.HALF_EVEN).doubleValue();
 
@@ -65,7 +65,7 @@ public abstract class AbstractNutricionalCalculation implements Serializable{
 	 * @param razao
 	 * @return @double
 	 */
-	protected  double calculoBase(double total, double porcao, double razao) {
+	public  double calculoBase(double total, double porcao, double razao) {
 
 		double part = BigDecimal.valueOf(total * porcao).setScale(3, RoundingMode.HALF_EVEN).doubleValue();
 
@@ -81,7 +81,7 @@ public abstract class AbstractNutricionalCalculation implements Serializable{
 	 * @param gordurasTotais
 	 * @return @double
 	 */
-	protected  double calculoValoEnergeticoKj(final double carboidratos, final double proteinas, final double gordurasTotais) {
+	public  double calculoValoEnergeticoKj(final double carboidratos, final double proteinas, final double gordurasTotais) {
 
 		double carboidratosCalculado = BigDecimal.valueOf(carboidratos * 17).setScale(3, RoundingMode.HALF_EVEN)
 				.doubleValue();
@@ -106,7 +106,7 @@ public abstract class AbstractNutricionalCalculation implements Serializable{
 	 * @return @double
 	 */
 	
-	protected  String roundDesc(double value) {
+	public String roundDesc(double value) {
 		
 		String result = "";
 		
@@ -130,7 +130,7 @@ public abstract class AbstractNutricionalCalculation implements Serializable{
 	 * @param value
 	 * @return @double
 	 */
-	protected  double round(double value) {
+	public double round(double value) {
 		
 		double result = 0.0;
 		
@@ -155,7 +155,7 @@ public abstract class AbstractNutricionalCalculation implements Serializable{
 	 * @return @double
 	 * 
 	 */
-	protected  int roundVD(double value) {
+	public int roundVD(double value) {
 		
 			return BigDecimal.valueOf(value).setScale(0, RoundingMode.HALF_EVEN).intValue();
 		}

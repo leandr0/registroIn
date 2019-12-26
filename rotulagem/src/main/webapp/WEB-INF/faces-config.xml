@@ -20,5 +20,12 @@
 			<to-view-id>report.jsf</to-view-id>
 			<redirect />
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>rotulo</from-outcome>
+			<to-view-id>rotulo.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+		
 	</navigation-rule>
 </faces-config>
