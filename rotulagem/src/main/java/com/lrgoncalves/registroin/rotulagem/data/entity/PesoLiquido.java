@@ -13,6 +13,8 @@ public class PesoLiquido implements Serializable {
 	
 	private String peso;
 
+	private int indexReport;
+	
 	public String getDescricao() {
 		return descricao;
 	}
@@ -27,5 +29,13 @@ public class PesoLiquido implements Serializable {
 
 	public void setPeso(String peso) {
 		this.peso = peso;
+	}
+
+	public int getIndexReport() {
+		return indexReport;
+	}
+
+	public void setIndexReport(int indexReport) {
+		this.indexReport = indexReport;
 	}
 }

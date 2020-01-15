@@ -33,3 +33,8 @@ function generatePDF () {
 	
 	window.print();
 }
+
+function changeElement(elementID) {
+    jQuery('.element-change').removeClass('active');
+    jQuery(elementID).addClass('active')  
+  }

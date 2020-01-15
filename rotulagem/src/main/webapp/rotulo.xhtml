@@ -14,7 +14,8 @@
 		href="#{resource['images/ico.png']}" />
 </h:head>
 
-<h:body styleClass="body">
+<h:body styleClass="body" >
+	<p:remoteCommand name="onload" autoRun="true" update="panel_data panel_client_information panel_grid_utils panel_checkbox panel_data"/>
 	<h:form id="input" prependId="false">
 		<div id="header">
 			<div id="logo_left" class="logo_left">
@@ -26,37 +27,26 @@
 					id="logo-rotulo-alimentos" styleClass="image_logo" />
 			</div>
 		</div>
-
-		<p:menubar>
-			<p:submenu label="File" icon="pi pi-file">
-				<p:submenu label="New" icon="pi pi-briefcase">
-					<p:menuitem value="Project" url="#" />
-					<p:menuitem value="Other" url="#" />
-				</p:submenu>
-				<p:menuitem value="Open" url="#" />
-				<p:separator />
-				<p:menuitem value="Quit" url="#" />
-			</p:submenu>
-
-			<p:submenu label="Edit" icon="pi pi-pencil">
-				<p:menuitem value="Undo" url="#" icon="pi pi-angle-double-left" />
-				<p:menuitem value="Redo" url="#" icon="pi pi-angle-double-right" />
-			</p:submenu>
-
-			<p:submenu label="Relatório" icon="pi pi-cog">
-				<p:submenu label="Visualizar" icon="pi pi-refresh">
-					<p:menuitem value="Report" icon="pi-save" update="email_validation_message" action="#{rotulo_ui.report}"/>
-					<p:menuitem value="Save" icon="pi-save"  action="#{rotulo_ui.save}"/>
-				</p:submenu>
-			</p:submenu>
-
-
-			<f:facet name="options">
-				<p:inputText style="margin:1px 10px 1px 1px;" placeholder="Search" />
-				<p:commandButton type="button" value="Logout" icon="pi pi-home" />
-			</f:facet>
-		</p:menubar>
-
+		<div id="menu_bar" class="topnav">
+		    <p:commandLink action="home"  id="home" class="element-change" onclick="changeElement('#home');showDiv('#loading-overlay');" oncomplete="hideLoading('#loading-overlay')"  >
+		    	<p:graphicImage name="images/home.png"  width="17"/>
+		    </p:commandLink>
+		    <p:commandLink action="#{rotulo_ui.novoRotulo}" id="new" onclick="changeElement('#new');showDiv('#loading-overlay');" oncomplete="hideLoading('#loading-overlay')" class="element-change active" update="panel_data panel_client_information panel_grid_utils panel_checkbox">
+		       	<p:graphicImage name="images/new.png"  width="17"/>
+		    </p:commandLink>
+		    <p:commandLink action="#{rotulo_ui.report}" id="business-report" onclick="changeElement('#business-report');showDiv('#loading-overlay');" oncomplete="hideLoading('#loading-overlay')" class="element-change" >
+		       	<p:graphicImage name="images/business-report.png"  width="17"/>
+		    </p:commandLink>
+		    <a id="save" class="element-change disabled-change">
+		      <img src="resources/images/save.png" alt="Picture Description" style="border:0;height:17px;"/>
+		    </a>
+		    <a id="edit" class="element-change disabled-change">
+		      <img src="resources/images/edit.png" alt="Picture Description" style="border:0;height:17px;"/>
+		    </a>
+		    <a onclick="changeElement('#pdf');" id="pdf" class="element-change disabled-change">
+		      <img src="resources/images/pdf.png" alt="Picture Description" style="border:0;height:17px;"/>
+		    </a>
+		</div>
 		<div id="os_information" class="os_information">
 			<fieldset>
 				<legend>Informações do Cliente</legend>
@@ -81,12 +71,14 @@
 		<div id="ux_function" class="ux_function">
 			<fieldset>
 				<legend>Utils</legend>
-				<h:panelGrid style="margin-bottom:10px" >
+				<h:panelGrid style="margin-bottom:10px" id="panel_grid_utils">
 					<p:selectBooleanCheckbox value="#{rotulo_ui.selectAll}" itemLabel="Selecionar todos" id="ckeck_box_selecionar_todos" styleClass="checkbox">
 						<p:ajax update="panel_checkbox panel_data" event="change" listener="#{rotulo_ui.checkBoxHandle}"/>
 					</p:selectBooleanCheckbox>
 						
-					<p:commandButton value="Limpar informações" id="clear_data" action="#{rotulo_ui.clearData}" update="panel_data panel_client_information" style="background:none;" image="clear-icon" />
+					<p:commandButton value="Limpar informações" id="clear_data" action="#{rotulo_ui.clearData}" update="panel_data panel_client_information panel_checkbox panel_grid_utils" style="background:none;" image="clear-icon" >
+						<p:confirm header="Confirmação" message="Deseja limpar todas as informações ?" icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
 						
 				</h:panelGrid>
 			</fieldset>
@@ -159,12 +151,6 @@
 						<p:ajax update="ckeck_box_alergenos panel_alergenos_data"
 							event="change" />
 					</p:selectBooleanCheckbox>
-					<p:selectBooleanCheckbox value="#{rotulo_ui.usoProduto.check}"
-						itemLabel="Uso do produto" id="ckeck_box_uso_produto">
-						<p:ajax update="ckeck_box_uso_produto panel_uso_produto_data"
-							event="change" />
-					</p:selectBooleanCheckbox>
-
 					<p:selectBooleanCheckbox value="#{rotulo_ui.produtor.check}"
 						itemLabel="Produtor" id="ckeck_box_produzido">
 						<p:ajax update="ckeck_box_produzido panel_produtor_data"
@@ -231,6 +217,16 @@
 						<p:ajax update="ckeck_box_registro panel_registro_data"
 							event="change" />
 					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.azeite.check}"
+						itemLabel="Azeite" id="ckeck_box_azeite">
+						<p:ajax update="ckeck_box_azeite panel_azeite_data panel_check_azeite_options"
+							event="change" />
+					</p:selectBooleanCheckbox>
+					<p:selectBooleanCheckbox value="#{rotulo_ui.outros.check}"
+						itemLabel="Outros" id="ckeck_box_uso_produto">
+						<p:ajax update="ckeck_box_uso_produto panel_uso_produto_data"
+							event="change" />
+					</p:selectBooleanCheckbox>
 				</h:panelGrid>
 			</div>
 
@@ -277,15 +273,16 @@
 						rendered="#{rotulo_ui.pesoLiquido.check}">
 						<h:panelGrid columns="2" cellpadding="5">
 							<p:outputLabel for="peso_liquido_in" value="Peso Liquido: " />
-							<p:inputNumber id="peso_liquido_in"
-								value="#{rotulo_ui.rotulo.pesoLiquido.peso}" decimalPlaces="0">
+							<p:inputText id="peso_liquido_in"
+								value="#{rotulo_ui.rotulo.pesoLiquido.peso}" >
+								<f:convertNumber integerOnly="true" />
 								<p:ajax update="fonte_peso_liquido_in" event="change"
 									listener="#{rotulo_ui.calculoPesoLiquido}" />
-							</p:inputNumber>
+							</p:inputText>
 							<p:outputLabel for="fonte_peso_liquido_in" value="Fonte: " />
 							<p:inputTextarea id="fonte_peso_liquido_in"
 								value="#{rotulo_ui.rotulo.pesoLiquido.descricao}" rows="3" cols="80"
-								autoResize="true" readonly="true" />
+								autoResize="true" />
 						</h:panelGrid>
 					</p:panel>
 				</p:outputPanel>
@@ -411,23 +408,6 @@
 				</p:outputPanel>
 			</div>
 			<!-- FIM GLUTEN E ALERGENOS -->
-
-			<!-- INICIO USO DO PRODUTO -->
-			<div style="height: 80%; width: 100%" id="div_uso_produto_data">
-				<p:outputPanel id="panel_uso_produto_data">
-					<p:panel header="Uso do produto" toggleable="true"
-						rendered="#{rotulo_ui.usoProduto.check}">
-						<h:panelGrid columns="2" cellpadding="5">
-							<p:outputLabel for="uso_produto_ita"
-								value="Intruções de Uso do Produto / Modo de preparo:" />
-							<p:inputTextarea id="uso_produto_ita" rows="2" cols="100"
-								autoResize="false" value="#{rotulo_ui.rotulo.usoProduto.descricao}"
-								placeholder="Texto Descritivo" />
-						</h:panelGrid>
-					</p:panel>
-				</p:outputPanel>
-			</div>
-			<!-- FIM USO DO PRODUTO -->
 
 			<!-- INICIO PRODUTOR -->
 			<div style="height: 80%; width: 100%" id="div_produzido_data">
@@ -586,9 +566,13 @@
 
 									</tr>
 									<tr>
-										<th colspan="3" class="text-right"><p:inputText
+										
+										<th colspan="3" class="text-right">
+											Porção: 
+											<p:inputText
 												value="#{rotulo_ui.rotulo.informacaoNutricional.porcao}"
-												id="otpt-vlr-porcao" /></th>
+												id="otpt-vlr-porcao" placeholder="(XX g ou ml) (medida caseira)" size="30"/>
+										</th>
 									</tr>
 									<tr>
 										<td rowspan="2" style="vertical-align: bottom;">Valor
@@ -651,7 +635,7 @@
 											</p:outputLabel></td>
 									</tr>
 									<tr>
-										<td>Gorduras Trans</td>
+										<td>Gorduras <i>Trans</i></td>
 										<td class="text-qtd-vd"><p:outputLabel
 												value="#{rotulo_ui.rotulo.informacaoNutricional.qtdPorcao.gordurasTrans} g"
 												id="otpt-vlr-gordura-trans" /></td>
@@ -780,8 +764,166 @@
 				</p:outputPanel>
 			</div>
 			<!-- FIM IMPORTADOR -->
+			<!-- INICIO AZEITE -->
+			<div style="height: 80%; width: 100%" id="div_azeite_data">
+				<p:outputPanel id="panel_azeite_data" >
+				
+					<div style="height: 30%; width: 100%" id="div_azeite_check">
+						<p:panel id="panel_check_azeite_options" rendered="#{rotulo_ui.azeite.check}" header="Azeite" toggleable="true" >
+							<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5" id="panel_azeite_checkbox">
+								<p:selectBooleanCheckbox
+									value="#{rotulo_ui.denominacaoAzeite.check}"
+									itemLabel="Denominação Azeite" id="ckeck_box_denominacao_azeite"
+									styleClass="checkbox">
+									<p:ajax
+										update="ckeck_box_denominacao_azeite panel_denominacao_azeite_data panel_azeite_data"
+										event="change" />
+								</p:selectBooleanCheckbox>
+								<p:selectBooleanCheckbox
+									value="#{rotulo_ui.classificacaoAzeite.check}"
+									itemLabel="Classificação Azeite" id="ckeck_box_classificacao_azeite"
+									styleClass="checkbox">
+									<p:ajax
+										update="ckeck_box_classificacao_azeite panel_classificacao_azeite_data panel_azeite_data"
+										event="change" />
+								</p:selectBooleanCheckbox>
+							</h:panelGrid>
+							<p:panel toggleable="true" rendered="#{rotulo_ui.denominacaoAzeite.check}" id="panel_denominacao_azeite_data">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="denominacao_azeite_ita"
+								value="Denominação: " />
+							<p:inputTextarea id="denominacao_azeite_ita" rows="4" cols="100"
+								autoResize="true"  value="#{rotulo_ui.rotulo.azeite.denominacao.descricao}" />	
+						</h:panelGrid>
+					</p:panel>	
+					<br />
+					<p:panel toggleable="true" rendered="#{rotulo_ui.classificacaoAzeite.check}" id="panel_classificacao_azeite_data">
+						<h:panelGrid columns="2" cellpadding="5">
+							<p:outputLabel for="classificacao_azeite_ita"
+								value="Classificação: " />
+							<p:inputTextarea id="classificacao_azeite_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.rotulo.azeite.classificacao.descricao}" />	
+						</h:panelGrid>
+						<table class="pure-table pure-table-bordered">
+						  <tr>
+						    <th rowspan="2" colspan="2">Grupo / Tipo</th>
+						    <th colspan="2">Azeite de Oliva</th>
+						  </tr>
+						  <tr>
+						    <th>Extra Virgem</th>
+						    <th>Virgem</th>
+						  </tr>
+						  <tr>
+						    <td colspan="2">
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.acidezLivre.item}"/>
+						    </td>
+						    <td> 
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.acidezLivre.extraVirgem}"/>
+						    </td>
+						    <td>
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.acidezLivre.virgem}"/>
+						    </td>
+						  </tr>
+						  <tr>
+						    <td colspan="2">Índices de Peróxidos <br/> (meq/kg)</td>
+						    <td>
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.indicesPeroxidos.extraVirgem}"/> 
+						    </td>
+						    <td>
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.indicesPeroxidos.virgem}"/>
+						    </td>
+						  </tr>
+						  <tr>
+						    <td rowspan="4">Extinção <br/> específica no <br/> ultravioleta</td>
+						  </tr>
+						  <tr>
+						  	<td> 270nm </td>
+						    <td>
+						     	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.extEspecUltravioleta270.extraVirgem}"/> 
+						     </td>
+						    <td>
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.extEspecUltravioleta270.virgem}"/>
+						    </td>
+						  </tr>
+						  <tr>
+						  	<td> Delta K </td>
+						    <td>
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.extEspecUltravioletaDelta.extraVirgem}"/>
+						    </td>
+						    <td>
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.extEspecUltravioletaDelta.virgem}"/>
+						    </td>
+						  </tr>
+						  <tr>
+						  	<td> 232nm </td>
+						    <td>
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.extEspecUltravioleta232.extraVirgem}"/>
+							</td>
+						    <td>
+						    	<p:outputLabel value="#{rotulo_ui.rotulo.azeite.classificacao.extEspecUltravioleta232.virgem}"/>
+						    </td>
+						  </tr>
+						</table>
+					</p:panel>
+				</p:panel>
+					
+					
+					</div>
+				</p:outputPanel>
+			</div>
+			<!-- FIM AZEITE -->
+			<!-- INICIO USO DO PRODUTO -->
+			<div style="height: 80%; width: 100%" id="div_uso_produto_data">
+				<p:outputPanel id="panel_uso_produto_data">
+					<p:panel header="Outras informações" toggleable="true"
+						rendered="#{rotulo_ui.outros.check}" id="panel_outros">
+						<h:panelGrid columns="3" cellpadding="5">
+							<p:outputLabel for="uso_produto_ita"
+								value="Descrição: " />
+							<p:inputTextarea id="uso_produto_ita" rows="2" cols="100"
+								autoResize="false" value="#{rotulo_ui.outros.value}"
+								placeholder="Texto Descritivo" />
+							<p:commandLink action="#{rotulo_ui.addItemOutros}"
+								update=" rotulo_outros_list panel_uso_produto_data panel_outros" title="Adicionar Itens" >
+									<p:graphicImage name="images/add-row.png"  width="24"/>
+							</p:commandLink>	
+						</h:panelGrid>
+						
+						<p:dataTable id="rotulo_outros_list" var="outro"
+							value="#{rotulo_ui.rotulo.outros}"
+							rendered="#{not empty rotulo_ui.rotulo.outros}" 
+							rowKey="#{outro.indexReport}"
+							editable="true" editMode="cell"
+							>
+						
+							<p:column headerText="Descrição" >
+								<p:cellEditor>
+					                <f:facet name="output"><h:outputText value="#{outro.descricao}" /></f:facet>
+					                <f:facet name="input"><p:inputTextarea value="#{outro.descricao}" style="width:100%" label="Descrição"/></f:facet>
+					            </p:cellEditor>
+				            </p:column>
+							
+							<p:column style="width:80px">
+            					<p:commandLink  action="#{rotulo_ui.deleteItemOutros}"  
+									update=" rotulo_outros_list panel_uso_produto_data panel_outros" title="Deletar Item" >
+									<p:confirm header="Confirmação" message="Deseja realmente excluir o item ?" icon="pi pi-exclamation-triangle" />
+									<f:setPropertyActionListener value="#{outro}" target="#{rotulo_ui.selectedItemOutros}" />
+									<p:graphicImage name="images/delete-row.png"  width="24"/>
+								</p:commandLink>
+        					</p:column>
+						</p:dataTable>
+					</p:panel>
+				</p:outputPanel>
+			</div>
+			<!-- FIM USO DO PRODUTO -->
 			</p:outputPanel>			
 		</div>
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<h:panelGrid columns="2" cellpadding="0" style="width:60%;text-align:center;padding-left:22%;">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="checked-icon" />
+				<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="cancel-icon" />
+			</h:panelGrid>
+		</p:confirmDialog> 
 		<div id="loading-overlay">
     		<div class="loading-icon"></div>
 		</div> 

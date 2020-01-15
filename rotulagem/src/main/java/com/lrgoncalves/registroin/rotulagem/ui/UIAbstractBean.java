@@ -8,18 +8,17 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
-import com.lrgoncalves.registroin.rotulagem.data.RotuloDAO;
+import com.lrgoncalves.registroin.rotulagem.data.ManagerRotuloBean;
 
-public abstract class AbstractView implements Serializable{
+public abstract class UIAbstractBean implements Serializable{
 
-	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7240503216295752718L;
+	private static final long serialVersionUID = 8504937041613479990L;
 
 	@Inject
-	protected RotuloDAO rotuloDataAccess;
+	protected ManagerRotuloBean rotuloDataAccess;
 
 	protected HttpSession session;
 	
@@ -27,7 +26,7 @@ public abstract class AbstractView implements Serializable{
 	
 	protected String chaveServico;
 
-	public AbstractView() {
+	public UIAbstractBean() {
 		createNewSession();
 	}
 
@@ -35,25 +34,23 @@ public abstract class AbstractView implements Serializable{
 		session = (HttpSession) getExternalContext().getSession(true);
 	}
 
-	
-	protected void setAttributeInSession(String attributeName, Object value){
+	protected void setSessionAttribute(String attributeName, Object value){
 		session.setAttribute(attributeName, value);
 	}
 
-	protected Object getAttributeInSession(String attributeName){
+	protected Object getSessionAttribute(String attributeName){
 		return session.getAttribute(attributeName);
 	}
 
-	protected String getParameterInRequest(String name){
+	protected String getRequestParameter(String name){
 		return getExternalContext().getRequestParameterMap().get(name);
 	}
 	
 	protected ExternalContext getExternalContext() {
-		return FacesContext.getCurrentInstance()
-		.getExternalContext();
+		return FacesContext.getCurrentInstance().getExternalContext();
 	}
 
-	protected Object getAttributeInContext(String attributeName){
+	protected Object getContextAttribute(String attributeName){
 		return getExternalContext().getRequestMap().get(attributeName);
 	}
 
@@ -97,11 +94,11 @@ public abstract class AbstractView implements Serializable{
 		this.chaveServico = chaveServico;
 	}
 
-	public RotuloDAO getRotuloDataAccess() {
+	public ManagerRotuloBean getRotuloDataAccess() {
 		return rotuloDataAccess;
 	}
 
-	public void setRotuloDataAccess(RotuloDAO rotuloDataAccess) {
+	public void setRotuloDataAccess(ManagerRotuloBean rotuloDataAccess) {
 		this.rotuloDataAccess = rotuloDataAccess;
 	}
 

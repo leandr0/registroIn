@@ -5,6 +5,8 @@ package com.lrgoncalves.registroin.rotulagem.data.entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -12,16 +14,17 @@ import java.util.UUID;
  *
  */
 public class Rotulo implements Serializable {
-
-
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2572041025114523780L;
+	private static final long serialVersionUID = 775853882980101485L;
 
 	private String id;
 	
 	private String data;
+	
+	private StatusType status = StatusType.EM_ANALISE;
 	
 	private Client client;
 	
@@ -61,7 +64,7 @@ public class Rotulo implements Serializable {
 	
 	private SimpleObject industriaOrigem;
 	
-	private SimpleObject usoProduto;
+	private List<SimpleObject> outros;
 	
 	private SimpleObject lote;
 	
@@ -70,6 +73,8 @@ public class Rotulo implements Serializable {
 	private SimpleObject ingredientes;
 	
 	private SimpleObject produtor;
+	
+	private Azeite azeite;
 
 	public Rotulo() {
 		
@@ -90,7 +95,7 @@ public class Rotulo implements Serializable {
 		derivadosLacteos	= new SimpleObject();
 		alergicos			= new SimpleObject();
 		glutenAlergenos		= new SimpleObject();
-		usoProduto			= new SimpleObject();
+		outros				= new LinkedList<SimpleObject>();
 		produtor			= new SimpleObject();
 		distribuidor		= new SimpleObject();
 		importador			= new SimpleObject();
@@ -104,6 +109,8 @@ public class Rotulo implements Serializable {
 		sac 			= new SimpleObject();
 		transgenico		= new SimpleObject();
 		registroMAPA 	= new SimpleObject();
+		
+		azeite			= new Azeite();
 	}
 	
 	public String getId() {
@@ -273,13 +280,13 @@ public class Rotulo implements Serializable {
 	public void setIndustriaOrigem(SimpleObject industriaOrigem) {
 		this.industriaOrigem = industriaOrigem;
 	}
-
-	public SimpleObject getUsoProduto() {
-		return usoProduto;
+	
+	public List<SimpleObject> getOutros() {
+		return outros;
 	}
 
-	public void setUsoProduto(SimpleObject usoProduto) {
-		this.usoProduto = usoProduto;
+	public void setOutros(List<SimpleObject> outros) {
+		this.outros = outros;
 	}
 
 	public SimpleObject getLote() {
@@ -312,5 +319,21 @@ public class Rotulo implements Serializable {
 
 	public void setProdutor(SimpleObject produtor) {
 		this.produtor = produtor;
+	}
+
+	public StatusType getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusType status) {
+		this.status = status;
+	}
+
+	public Azeite getAzeite() {
+		return azeite;
+	}
+
+	public void setAzeite(Azeite azeite) {
+		this.azeite = azeite;
 	}
 }

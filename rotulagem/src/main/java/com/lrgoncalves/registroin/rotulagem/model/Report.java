@@ -42,9 +42,5 @@ public class Report implements Serializable{
 
 	public void setItems(Map<Integer, Object> items) {
 		this.items = items;
-	}
-	
-	
-	
-
+	}	
 }

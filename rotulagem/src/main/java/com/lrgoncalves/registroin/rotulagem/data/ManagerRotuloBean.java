@@ -8,15 +8,16 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.enterprise.inject.Model;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.bson.Document;
 
+import com.lrgoncalves.registroin.rotulagem.data.entity.Azeite;
+import com.lrgoncalves.registroin.rotulagem.data.entity.ClassificacaoAzeite;
+import com.lrgoncalves.registroin.rotulagem.data.entity.ClassificacaoAzeiteItem;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Client;
 import com.lrgoncalves.registroin.rotulagem.data.entity.ConservacaoProduto;
 import com.lrgoncalves.registroin.rotulagem.data.entity.InformacaoNutricional;
@@ -24,6 +25,7 @@ import com.lrgoncalves.registroin.rotulagem.data.entity.PesoLiquido;
 import com.lrgoncalves.registroin.rotulagem.data.entity.QuantidadeNutricional;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
 import com.lrgoncalves.registroin.rotulagem.data.entity.SimpleObject;
+import com.lrgoncalves.registroin.rotulagem.data.entity.StatusType;
 import com.lrgoncalves.registroin.rotulagem.data.exception.PersistRotuloException;
 import com.lrgoncalves.registroin.rotulagem.data.exception.SearchRotuloException;
 import com.mongodb.MongoClient;
@@ -32,23 +34,23 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOptions;
 
 /**
  * @author digitallam
  *
  */
-@Model
-public class RotuloDAO implements Serializable{
+public class ManagerRotuloBean implements Serializable{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8806186280696615791L;
+	private static final long serialVersionUID = -2756785606337743298L;
 
 	@Inject
 	transient MongoClient mongoClient;
 	
-	private static final Logger LOGGER = Logger.getLogger(RotuloDAO.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ManagerRotuloBean.class.getName());
 
 	public List<Rotulo> searchByDescription(String query) throws SearchRotuloException{
 
@@ -70,13 +72,42 @@ public class RotuloDAO implements Serializable{
 			}
 
 		}catch (Throwable t) {
-			LOGGER.log(Level.SEVERE, t.getMessage());
+			LOGGER.error(t.getMessage());
 			throw new SearchRotuloException(t);
 		} finally {
 			mongoClient.close();
 		}
 		
 		return rotulos;
+	}
+	
+	public Rotulo find(String id) throws SearchRotuloException{
+
+		Rotulo model = null;
+		
+		try {
+
+			MongoDatabase database = mongoClient.getDatabase("registroin");
+
+			MongoCollection<Document> collection = database.getCollection("rotulos");
+			
+			FindIterable<Document> iterable = collection.find(Filters.eq("_id", id));
+
+			MongoCursor<Document> cursor = iterable.cursor();
+			
+			while (cursor.hasNext()) {
+				Document rotulo = cursor.next();
+				model = builRotulo(rotulo);
+			}
+
+		}catch (Throwable t) {
+			LOGGER.error(t.getMessage());
+			throw new SearchRotuloException(t);
+		} finally {
+			mongoClient.close();
+		}
+		
+		return model;
 	}
 	
 	public void persistRotulo(Rotulo model) throws PersistRotuloException{
@@ -197,7 +228,7 @@ public class RotuloDAO implements Serializable{
 				LOGGER.info(e.getMessage());
 			}
 			try {
-				rotulo.append("uso_produto", buildSimpleObject(model.getUsoProduto()));
+				rotulo.append("outros", buildOutros(model.getOutros()));
 			}catch (IllegalArgumentException e) {
 				LOGGER.info(e.getMessage());
 			}
@@ -221,19 +252,100 @@ public class RotuloDAO implements Serializable{
 			}catch (IllegalArgumentException e) {
 				LOGGER.info(e.getMessage());
 			}
+			try {
+				rotulo.append("azeite", buildAzeite(model.getAzeite()));
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+			try {
+				rotulo.append("status", model.getStatus().getValue());
+			}catch (IllegalArgumentException e) {
+				LOGGER.info(e.getMessage());
+			}
+
 			
-			collection.insertOne(rotulo);
+			collection.replaceOne(Filters.eq("_id", model.getId()),rotulo,new ReplaceOptions().upsert(true));
 			
 			Thread.sleep(2000);
 			
 		} catch (Throwable t) {
-			LOGGER.log(Level.SEVERE, t.getMessage());
+			LOGGER.error(t.getMessage());
 			throw new PersistRotuloException(t);
 		} finally {
 			mongoClient.close();
 		}
 	}
 
+	public Document buildOutros(final List<SimpleObject> model) {
+	
+		if(model == null || model.isEmpty())
+			throw new IllegalArgumentException("Invalid object!");
+		
+		List<Document> documents = new LinkedList<Document>();	
+		
+		for (SimpleObject simpleObject : model) {
+			documents.add(buildSimpleObject(simpleObject));
+		}
+	
+		Document document = new Document();
+		document.append("informacoes_adicionais", documents);
+		
+		return document;
+	}
+	
+	
+	public Document buildAzeite(final Azeite model) {
+		
+		if(model == null)
+			throw new IllegalArgumentException("Invalid object!");
+	
+		Document document = new Document();
+		document.append("index_report", model.getIndexReport());
+		
+		try {
+			document.append("denominacao", buildSimpleObject(model.getDenominacao()));
+		}catch (Throwable t) {
+			LOGGER.info(t.getMessage());
+		}
+		
+		try {
+			document.append("classificacao", buildClassificacaoAzeite(model.getClassificacao()));
+		}catch (Throwable t) {
+			LOGGER.info(t.getMessage());
+		}
+		
+		return document;
+	}
+	
+	public Document buildClassificacaoAzeite(final ClassificacaoAzeite model ) {
+		
+		if(model == null)
+			throw new IllegalArgumentException("Invalid object!");
+		
+		Document document = new Document();
+		document.append("index_report", model.getIndexReport());
+		document.append("descricao", model.getDescricao());
+		document.append("acidez-livre", buildClassificacaoAzeiteItem(model.getAcidezLivre()));
+		document.append("indices-peroxidos", buildClassificacaoAzeiteItem(model.getIndicesPeroxidos()));
+		document.append("ext-espec-ultravioleta-270", buildClassificacaoAzeiteItem(model.getExtEspecUltravioleta270()));
+		document.append("ext-espec-ultravioleta-232", buildClassificacaoAzeiteItem(model.getExtEspecUltravioleta232()));
+		document.append("ext-espec-ultravioleta-delta", buildClassificacaoAzeiteItem(model.getExtEspecUltravioletaDelta()));
+		
+		return document;
+	}
+	
+	public Document buildClassificacaoAzeiteItem(final ClassificacaoAzeiteItem model ) {
+		
+		if(model == null)
+			throw new IllegalArgumentException("Invalid object!");
+	
+		Document document = new Document();
+		document.append("item", model.getItem());
+		document.append("extra-virgem",model.getExtraVirgem() );
+		document.append("virgem", model.getVirgem());
+		
+		return document;
+	}
 	
 	public Document buildSimpleObject(final SimpleObject model) {
 		
@@ -241,6 +353,7 @@ public class RotuloDAO implements Serializable{
 			throw new IllegalArgumentException("Invalid object!");
 	
 		Document document = new Document();
+		document.append("index_report", model.getIndexReport());
 		document.append("descricao", model.getDescricao());
 		
 		return document;
@@ -254,6 +367,7 @@ public class RotuloDAO implements Serializable{
 		Document document = new Document();
 		document.append("descricao", model.getDescricao());
 		document.append("peso", model.getPeso());
+		document.append("index_report", model.getIndexReport());
 		
 		return document;
 	}
@@ -265,6 +379,7 @@ public class RotuloDAO implements Serializable{
 		
 		Document document = new Document();
 		document.append("validade_produto", model.getValidadeProduto());
+		document.append("index_report", model.getIndexReport());
 		
 		return document;
 	}
@@ -332,11 +447,13 @@ public class RotuloDAO implements Serializable{
 		document.append("quantidade_porcao", buildQuantidadeNutricional(model.getQtdPorcao()));
 		document.append("percentual_valor_diario", buildQuantidadeNutricional(model.getPercVlrDiario()));
 		
+		document.append("index_report", model.getIndexReport());
+		
 		return document;
 	}
 	
 	
-	private  Rotulo builRotulo(Document document) {
+	public  Rotulo builRotulo(Document document) {
 		
 		Rotulo rotulo = new Rotulo();
 		
@@ -439,7 +556,7 @@ public class RotuloDAO implements Serializable{
 			LOGGER.info(e.getMessage());
 		}
 		try {
-			rotulo.setUsoProduto( buildSimpleObject((Document) document.get("uso_produto")));
+			rotulo.setOutros(buildOutros((Document) document.get("outros")));
 		}catch (IllegalArgumentException e) {
 			LOGGER.info(e.getMessage());
 		}
@@ -463,8 +580,38 @@ public class RotuloDAO implements Serializable{
 		}catch (IllegalArgumentException e) {
 			LOGGER.info(e.getMessage());
 		}
+		try {
+			rotulo.setAzeite(buildAzeite((Document) document.get("azeite")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		try {
+			rotulo.setStatus(StatusType.valueOf(document.getString("status")));
+		}catch (Throwable e) {
+			LOGGER.info(e.getMessage());
+		}
 		
 		return rotulo;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private  List<SimpleObject> buildOutros(Document document) {
+		
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
+		
+		List<SimpleObject> results = new LinkedList<SimpleObject>();
+		
+		List<Document>  documents = (List<Document>) document.get("informacoes_adicionais");
+		
+		if(documents == null)
+			throw new IllegalArgumentException("Invalid document!");
+		
+		for (Document doc : documents) {
+			results.add(buildSimpleObject(doc));
+		}
+		
+		return results;
 	}
 	
 	
@@ -476,6 +623,7 @@ public class RotuloDAO implements Serializable{
 		PesoLiquido model = new PesoLiquido();
 		model.setDescricao(document.getString("descricao"));
 		model.setPeso(document.getString("peso"));
+		model.setIndexReport(buildIndexReport(document));
 		
 		return model;
 	}
@@ -488,6 +636,7 @@ public class RotuloDAO implements Serializable{
 		
 		ConservacaoProduto model = new ConservacaoProduto();
 		model.setValidadeProduto(((Map<String, String>) document.get("validade_produto")));
+		model.setIndexReport(buildIndexReport(document));
 		
 		return model;
 	}
@@ -499,6 +648,7 @@ public class RotuloDAO implements Serializable{
 		
 		SimpleObject model = new SimpleObject();
 		model.setDescricao(document.getString("descricao"));
+		model.setIndexReport(buildIndexReport(document));
 		
 		return model;
 	}
@@ -534,12 +684,14 @@ public class RotuloDAO implements Serializable{
 		model.setLegislacao(document.getString("legislacao"));
 		model.setPorcao(document.getString("descritivo_porcao"));
 
+		model.setIndexReport(buildIndexReport(document));
+		
 		model.setQtdPorcao(buildQuantidadeNutricional((Document) document.get("quantidade_porcao")));
 		model.setPercVlrDiario(buildQuantidadeNutricional((Document) document.get("percentual_valor_diario")));
 
 		return model;
 	}
-
+	
 	private  QuantidadeNutricional buildQuantidadeNutricional(Document document) {
 		
 		if(document == null)
@@ -571,5 +723,76 @@ public class RotuloDAO implements Serializable{
 		
 		return model;
 	}
+	
+	private Azeite buildAzeite(Document document) {
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
+		
+		Azeite model = new Azeite();
+		
+		model.setIndexReport(buildIndexReport(document));
+		
+		try {
+			model.setClassificacao(buildClassificacaoAzeite((Document) document.get("classificacao")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		
+		try {
+			model.setDenominacao(buildSimpleObject((Document) document.get("denominacao")));
+		}catch (IllegalArgumentException e) {
+			LOGGER.info(e.getMessage());
+		}
+		
+		return model;
+	}
+	
+	
+	private ClassificacaoAzeite buildClassificacaoAzeite(Document document) {
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
+		
+		ClassificacaoAzeite model = new ClassificacaoAzeite();
+		
+		model.setIndexReport(buildIndexReport(document));
+		
+		model.setAcidezLivre(buildClassificacaoAzeiteItem((Document) document.get("acidez-livre")));
+		model.setExtEspecUltravioleta232(buildClassificacaoAzeiteItem((Document) document.get("ext-espec-ultravioleta-232")));
+		model.setExtEspecUltravioleta270(buildClassificacaoAzeiteItem((Document) document.get("ext-espec-ultravioleta-270")));
+		model.setExtEspecUltravioletaDelta(buildClassificacaoAzeiteItem((Document) document.get("ext-espec-ultravioleta-delta")));
+		model.setIndicesPeroxidos(buildClassificacaoAzeiteItem((Document) document.get("indices-peroxidos")));
+		model.setDescricao( document.getString("descricao"));
+		
+		
+		return model;
+		
+	}
+	
+	private ClassificacaoAzeiteItem buildClassificacaoAzeiteItem(Document document) {
+		if(document == null)
+			throw new IllegalArgumentException("Invalid document!");
+		
+		ClassificacaoAzeiteItem model = new ClassificacaoAzeiteItem();
+		
+		model.setExtraVirgem(document.getString("extra-virgem"));
+		model.setVirgem(document.getString("virgem"));
+		model.setItem(document.getString("item"));
+		
+		return model;
+		
+	}
+	
+	private int buildIndexReport(final Document document) {
+		
+		try {
+			
+			return document.getInteger("index_report");
+			
+		}catch (Throwable t) {
+			LOGGER.info(t.getMessage());
+		}		
+		return 0;
+	}
 
+	
 }

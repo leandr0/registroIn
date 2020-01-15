@@ -3,6 +3,7 @@
  */
 package com.lrgoncalves.registroin.rotulagem.ui;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -25,15 +26,15 @@ import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
  */
 @Named(value = "initial_ui")
 @SessionScoped
-public class InitialView extends AbstractView {
+public class UIInitialBean extends UIAbstractBean {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3855455283379000846L;
+	private static final long serialVersionUID = -3036319342392818852L;
 
 
-	private final Logger LOGGER = Logger.getLogger(InitialView.class.getName());
+	private final Logger LOGGER = Logger.getLogger(UIInitialBean.class.getName());
 
 	
 	private String searchRotuloQuery;
@@ -65,7 +66,7 @@ public class InitialView extends AbstractView {
 			if(!StringUtils.isAllBlank(searchRotuloQuery))
 				rotulos = rotuloDataAccess.searchByDescription(searchRotuloQuery);
 			
-			Thread.sleep(3000);
+			Thread.sleep(2000);
 			
 		} catch (Throwable e) {
 			LOGGER.severe(e.getMessage());
@@ -74,12 +75,22 @@ public class InitialView extends AbstractView {
 
 	public void onRowSelect(SelectEvent event) {
 		
-		LOGGER.info(selectedRotulo.getClient().getProduto());
-		
-		LOGGER.info(((Rotulo) event.getObject()).getId());
-		
         FacesMessage msg = new FacesMessage("Rotulo Selected", ((Rotulo) event.getObject()).getId());
         FacesContext.getCurrentInstance().addMessage(null, msg);
+        
+        try {
+        	
+        	Rotulo transferObject = (Rotulo) event.getObject();
+        	
+        	setSessionAttribute("fromPage", "home");
+        	
+        	setSessionAttribute("rotulo", transferObject);
+        	
+			getExternalContext().redirect("report.jsf");
+		} catch (IOException e) {
+			LOGGER.severe(e.getMessage());
+		}
+        
     }
 	
 	public void onRowUnselect(UnselectEvent event) {

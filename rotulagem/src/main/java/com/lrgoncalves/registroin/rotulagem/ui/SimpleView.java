@@ -20,6 +20,8 @@ public class SimpleView implements Serializable {
 	private boolean check;
 	
 	private int index;
+	
+	private String value;
 
 	public boolean isCheck() {
 		return check;
@@ -35,5 +37,13 @@ public class SimpleView implements Serializable {
 
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 }

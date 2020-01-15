@@ -28,6 +28,7 @@ public class InformacaoNutricional implements Serializable {
 	
 	private QuantidadeNutricional percVlrDiario;
 
+	private int indexReport;
 	
 	public InformacaoNutricional() {
 		dadosBase 		= new TabelaNutricional();
@@ -106,5 +107,13 @@ public class InformacaoNutricional implements Serializable {
 
 	public void setPorcao(String porcao) {
 		this.porcao = porcao;
+	}
+
+	public int getIndexReport() {
+		return indexReport;
+	}
+
+	public void setIndexReport(int indexReport) {
+		this.indexReport = indexReport;
 	}
 }
