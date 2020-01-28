@@ -41,7 +41,7 @@ public class ManagerReportBean implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 9006495284764146044L;
+	private static final long serialVersionUID = -7071277587225030230L;
 
 	private static final String ROTULO_PATH = "/tmp/registroIn/rotulos/"; 
 	
@@ -66,7 +66,7 @@ public class ManagerReportBean implements Serializable {
 	
 	private String downloadHTML(final String rotulo) throws IOException {
 		
-		String url = "http://localhost:8080/rotulagem/report-partner.jsf?rotulo=" + rotulo;
+		String url = "http://localhost/rotulagem/report-partner.jsf?rotulo=" + rotulo;
 		
 		URL u = new URL(url);
 
