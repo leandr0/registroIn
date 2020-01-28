@@ -6,7 +6,6 @@ package com.lrgoncalves.registroin.rotulagem.ui;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -14,6 +13,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.primefaces.event.UnselectEvent;
 
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
@@ -31,9 +32,9 @@ public class UIInitialBean extends UIAbstractBean {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3036319342392818852L;
+	private static final long serialVersionUID = 868258502558840268L;
 
-	private final Logger LOGGER = Logger.getLogger(UIInitialBean.class.getName());
+	private static final Log  LOGGER = LogFactory.getLog(UIInitialBean.class);
 
 	private String searchRotuloQuery;
 
@@ -65,16 +66,11 @@ public class UIInitialBean extends UIAbstractBean {
 			Thread.sleep(1000);
 
 		} catch (Throwable e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error("searchRotulo", e.getCause());
 		}
 	}
 
 	public void onRowSelect() {
-		/**
-		 * FacesMessage msg = new FacesMessage("Rotulo Selected", ((Rotulo)
-		 * event.getObject()).getId());
-		 * FacesContext.getCurrentInstance().addMessage(null, msg);
-		 **/
 
 		try {
 
@@ -86,7 +82,7 @@ public class UIInitialBean extends UIAbstractBean {
 
 			getExternalContext().redirect("report.jsf");
 		} catch (IOException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error("onRowSelect",e.getCause());
 		}
 
 	}
@@ -127,7 +123,7 @@ public class UIInitialBean extends UIAbstractBean {
 			    try {
 			    	reportBean.sendReportByEmail(selectedRotulo);
 			    }catch (Throwable e) {
-			        LOGGER.severe(e.getMessage());
+			    	LOGGER.error("sendReportByEmail",e.getCause());
 			    }
 			};
 
@@ -135,7 +131,7 @@ public class UIInitialBean extends UIAbstractBean {
 			thread.start();
 			
 		} catch (Exception e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error("sendByEmailChangingStatus",e.getCause());
 		}
 
 	}
@@ -160,7 +156,7 @@ public class UIInitialBean extends UIAbstractBean {
 			
 			
 		} catch (Exception e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error("updateStatus",e.getCause());
 		}
 
 	}
@@ -186,7 +182,7 @@ public class UIInitialBean extends UIAbstractBean {
 			}
 			
 		} catch (PersistRotuloException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.error("deleteRotulo",e.getCause());
 		}
 		
 		return null;

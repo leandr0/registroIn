@@ -22,6 +22,8 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.lrgoncalves.registroin.rotulagem.mail.exception.SendRotuloMailExcpetion;
 
@@ -34,7 +36,11 @@ public class ManagerSendMailBean implements SendMailBean {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 4514990617797305009L;
+	private static final long serialVersionUID = -5000394900565933544L;
+
+
+	private static final Log  LOGGER = LogFactory.getLog(ManagerSendMailBean.class);
+	
 	
 	@Resource(name = "java:jboss/mail/RegistroIn")
     private Session session;	
@@ -91,6 +97,7 @@ public class ManagerSendMailBean implements SendMailBean {
 			return null;
 			
 		} catch (Exception ex) {
+			LOGGER.error("sendRotuloMail", ex.getCause());
 			throw new SendRotuloMailExcpetion(ex.getMessage());
 		} 
 	}
