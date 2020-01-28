@@ -54,7 +54,7 @@ public class ManagerReportBean implements Serializable {
 		String outputFile = ROTULO_PATH+rotulo+".pdf";
 		OutputStream os = new FileOutputStream(outputFile);
 
-		manipulatePdf(downloadHTML(rotulo).replace("/rotulagem/", "http://localhost:8080/rotulagem/"), outputFile,
+		manipulatePdf(downloadHTML(rotulo).replace("/rotulagem/", "http://localhost/rotulagem/"), outputFile,
 				PageSize.A4, PageSize.A4.getWidth());
 
 		os.close();
