@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.lrgoncalves.registroin.rotulagem;
+package com.lrgoncalves.registroin.rotulagem.mail;
 
 import java.io.Serializable;
 
@@ -21,7 +21,7 @@ public class RotuloMailMessage implements Serializable {
 
 	private String[] recipientList;
 	
-	private String emailSenderAddress = "consultoria@registroin.com.br";
+	private String emailSenderAddress = "vanessa@registroin.com.br";
 	
 	private String subject;
 

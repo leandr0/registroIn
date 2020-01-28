@@ -45,7 +45,10 @@
 			    <p:commandLink  id="save" action="#{report_ui.save}" onclick="changeElement('#save');showDiv('#loading-overlay');" oncomplete="hideLoading('#loading-overlay')"  class="element-change">
                 	<p:graphicImage name="images/save.png"  width="17"/>
                 </p:commandLink>
-			    <p:commandLink id="edit" action="#{rotulo_ui.edit}" onclick="changeElement('#edit');showDiv('#loading-overlay');" oncomplete="hideLoading('#loading-overlay')" rendered="#{report_ui.home}" class="element-change">
+                <p:commandLink  id="email" action="#{report_ui.sendMail}" onclick="changeElement('#email');showDiv('#loading-overlay');" oncomplete="hideLoading('#loading-overlay')"  class="element-change">
+                	<p:graphicImage name="images/send-email.png"  width="17"/>
+                </p:commandLink>
+			    <p:commandLink id="edit" action="#{rotulo_ui.edit}" onclick="changeElement('#edit');showDiv('#loading-overlay');" oncomplete="hideLoading('#loading-overlay')" class="element-change">
                 	<p:graphicImage name="images/edit.png"  width="17"/>
                 </p:commandLink>
 			    <p:commandLink id="back-arrow" action="rotulo" onclick="changeElement('#back-arrow');showDiv('#loading-overlay');" oncomplete="hideLoading('#loading-overlay')" rendered="#{not report_ui.home}" class="element-change">
@@ -68,7 +71,7 @@
 							</tr>
 							<tr>
 								<th style="text-align:left"><p:outputLabel value="Produto: " /></th>
-								<td><h:outputText id="produto_it" value="#{report_ui.rotulo.client.produto}" /></td>
+								<td><h:outputText id="produto_it" value="#{report_ui.rotulo.produto}" /></td>
 								<td rowspan="2" style="text-align:center;width:200px">
 								<p:barcode value="#{report_ui.rotulo.id}" type="pdf417" style="max-width: 200px;height: 40px;"/></td>
 							</tr>

@@ -8,6 +8,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
+import com.lrgoncalves.registroin.rotulagem.ManagerReportBean;
+import com.lrgoncalves.registroin.rotulagem.data.ManagerClientBean;
 import com.lrgoncalves.registroin.rotulagem.data.ManagerRotuloBean;
 
 public abstract class UIAbstractBean implements Serializable{
@@ -20,6 +22,12 @@ public abstract class UIAbstractBean implements Serializable{
 	@Inject
 	protected ManagerRotuloBean rotuloDataAccess;
 
+	@Inject
+	protected ManagerClientBean clientDataAccess;
+	
+	@Inject
+	ManagerReportBean reportBean;
+	
 	protected HttpSession session;
 	
 	protected String nomeUsuario;

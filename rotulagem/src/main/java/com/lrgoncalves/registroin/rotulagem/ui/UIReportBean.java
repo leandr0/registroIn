@@ -12,55 +12,53 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
+import com.lrgoncalves.registroin.rotulagem.data.entity.StatusType;
 
 /**
  * @author digitallam
  *
  */
-@Named(value ="report_ui")
+@Named(value = "report_ui")
 @RequestScoped
 public class UIReportBean extends UIAbstractBean {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7892713403790840661L;
-
+	private static final long serialVersionUID = 3318380076303481841L;
 
 	private static final Logger LOGGER = Logger.getLogger(UIReportBean.class.getName());
 
-	
 	private Rotulo rotulo;
-	
+
 	private String fromPage;
-	
+
 	private boolean home;
-	
+
 	private SimpleView httpRequest = new SimpleView();
-	
+
 	public void onLoad() {
-		
+
 		try {
 
-			if(!StringUtils.isBlank(getHttpRequest().getValue())) {
-				rotulo  = rotuloDataAccess.find(getHttpRequest().getValue());
+			if (!StringUtils.isBlank(getHttpRequest().getValue())) {
+				rotulo = rotuloDataAccess.find(getHttpRequest().getValue());
 				getHttpRequest().setCheck(true);
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			LOGGER.severe(e.getMessage());
 		}
 	}
-	
-	
+
 	@PostConstruct
-    public void init() {
-		
+	public void init() {
+
 		rotulo = (Rotulo) getSessionAttribute("rotulo");
 		fromPage = (String) getSessionAttribute("fromPage");
-		
-		if(StringUtils.equalsIgnoreCase(fromPage, "home")) {
+
+		if (StringUtils.equalsIgnoreCase(fromPage, "home")) {
 			home = true;
-		}else {
+		} else {
 			home = false;
 		}
 	}
@@ -72,7 +70,7 @@ public class UIReportBean extends UIAbstractBean {
 	public void setRotulo(Rotulo rotulo) {
 		this.rotulo = rotulo;
 	}
-	
+
 	public String save() {
 
 		try {
@@ -157,20 +155,20 @@ public class UIReportBean extends UIAbstractBean {
 			if (rotulo.getConservacaoProduto().getIndexReport() < 1) {
 				rotulo.setConservacaoProduto(null);
 			}
-			
-			if(rotulo.getAzeite().getIndexReport() < 1) {
+
+			if (rotulo.getAzeite().getIndexReport() < 1) {
 				rotulo.setAzeite(null);
-			}else {
-				
-				if(rotulo.getAzeite().getClassificacao().getIndexReport() < 1) {
+			} else {
+
+				if (rotulo.getAzeite().getClassificacao().getIndexReport() < 1) {
 					rotulo.getAzeite().setClassificacao(null);
 				}
-				if(rotulo.getAzeite().getDenominacao().getIndexReport() < 1) {
+				if (rotulo.getAzeite().getDenominacao().getIndexReport() < 1) {
 					rotulo.getAzeite().setDenominacao(null);
 				}
-				
+
 			}
-			
+
 			rotuloDataAccess.persistRotulo(rotulo);
 
 			return "home";
@@ -180,6 +178,39 @@ public class UIReportBean extends UIAbstractBean {
 		}
 		return null;
 
+	}
+
+	public String sendMail() {
+
+		try {
+
+			
+			Runnable runnable = () -> {
+			    try {
+			    	reportBean.sendReportByEmail(rotulo);
+			    }catch (Throwable e) {
+			        LOGGER.severe(e.getMessage());
+			    }
+			};
+
+			Thread thread = new Thread(runnable);
+			thread.start();
+		
+			StatusType updateStatus = null;
+			
+			if(rotulo.getStatus() == StatusType.EM_ANALISE)
+				updateStatus = StatusType.ENVIADO;
+			
+			else
+				updateStatus = StatusType.RE_ENVIADO;
+			
+			rotuloDataAccess.updateStatus(rotulo.getId(), updateStatus);
+			
+		} catch (Exception e) {
+			LOGGER.severe(e.getMessage());
+		}
+
+		return "home";
 	}
 
 	public String getFromPage() {
@@ -198,13 +229,11 @@ public class UIReportBean extends UIAbstractBean {
 		this.home = home;
 	}
 
-
 	public SimpleView getHttpRequest() {
 		return httpRequest;
 	}
 
-
 	public void setHttpRequest(SimpleView httpRequest) {
 		this.httpRequest = httpRequest;
-	}	
+	}
 }

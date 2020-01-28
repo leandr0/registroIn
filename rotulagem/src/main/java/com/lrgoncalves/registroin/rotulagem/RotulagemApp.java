@@ -16,6 +16,8 @@ import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -31,15 +33,19 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.media.MediaType;
+import com.lrgoncalves.registroin.rotulagem.data.ManagerClientBean;
 import com.lrgoncalves.registroin.rotulagem.data.ManagerRotuloBean;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Client;
 import com.lrgoncalves.registroin.rotulagem.data.entity.ConservacaoProduto;
+import com.lrgoncalves.registroin.rotulagem.data.entity.Contact;
 import com.lrgoncalves.registroin.rotulagem.data.entity.InformacaoNutricional;
 import com.lrgoncalves.registroin.rotulagem.data.entity.PesoLiquido;
 import com.lrgoncalves.registroin.rotulagem.data.entity.QuantidadeNutricional;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
 import com.lrgoncalves.registroin.rotulagem.data.entity.SimpleObject;
 import com.lrgoncalves.registroin.rotulagem.data.entity.StatusType;
+import com.lrgoncalves.registroin.rotulagem.mail.ManagerSendMailBean;
+import com.lrgoncalves.registroin.rotulagem.mail.RotuloMailMessage;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -69,75 +75,91 @@ public class RotulagemApp {
 			LOGGER.info("OK");
 		}
 
+		ManagerClientBean clientBean = new ManagerClientBean();
+
+		Client client = new Client();
+
+		client.setIdentificationNumber("02.775.178/0001-30");
+		client.setNome("Casa do Pães");
+		// model.setId("5e1f28d7a1616a71b0637a41");
+
+		List<Contact> contactList = new LinkedList<Contact>();
+
+		contactList.add(new Contact("Barnabé", "barnabe@cadadospaes.com.br"));
+		contactList.add(new Contact("Jurema", "jurema@cadadospaes.com.br"));
+		contactList.add(new Contact("Astolfo", "astolfo@cadadospaes.com.br"));
+		contactList.add(new Contact("Astrogilda", "astrogilda@cadadospaes.com.br"));
+		contactList.add(new Contact("Etevaldo", "etevaldo@cadadospaes.com.br"));
+
+		client.setContactList(contactList);
+
 		// persistRotulo(calculoNutricional());
-		// queryRotulo();
+		// queryRotulo(); https://anotepad.com/notes/77iamee
 
 		try {
 
-			ManagerSendMailBean msm = new ManagerSendMailBean();
-			
-			System.out.println(msm.contentMessage);
-			
-			
-			String rotulos[] = { "0333699444447408384815016609442573871361", "0194052837937416113588542942894662954391",
-					"0089173069284492745417836458647888247930", "0031525179936499783428157573768743719045",
-					"0255525142956038956954255055096301377942", "0223015741195953485995574356396069341726",
-					"0029825987460625723862659010133531823726", "0165849455591653689589710928771090453076",
-					"0265351433445692959508476019956415586051", "0080415299080158312084773089900098444239" };
+			mongoDbClient = new MongoClient("localhost", 27017);
+			clientBean.setMongoClient(mongoDbClient);
+			clientBean.persistClient(client);
 
-			ManagerSendMailBean sendMail = new ManagerSendMailBean();
-			
-			for (String rotulo : rotulos) {
+			// ManagerSendMailBean msm = new ManagerSendMailBean();
 
-				
-				/*
-				 * Rotulo model = queryRotulo(rotulo);
-				 * 
-				 * RotuloMailMessage message = new RotuloMailMessage();
-				 * 
-				 * message.setRecipientList("leandro1604@gmail.com","vanessa@registroin.com.br")
-				 * ; message.setAttachmentFilePath(
-				 * "/Users/digitallam/workspace/src/registroIn/rotulagem/"+rotulo+".pdf");
-				 * message.setProductName(model.getClient().getProduto());
-				 * message.setClientName(model.getClient().getNome());
-				 * 
-				 * sendMail.sendRotuloMail(message);
-				 */
-						
-				
-				/*
-				 * String url = "http://localhost:8080/rotulagem/report-partner.jsf?rotulo=" +
-				 * rotulo; String outputFile = rotulo + ".pdf"; OutputStream os = new
-				 * FileOutputStream(outputFile);
-				 * 
-				 * URL u = new URL(url);
-				 * 
-				 * URLConnection conn = u.openConnection(); InputStream is =
-				 * conn.getInputStream();
-				 * 
-				 * BufferedReader in = new BufferedReader(new InputStreamReader(is));
-				 * StringBuffer inputLine = new StringBuffer();
-				 * 
-				 * while (in.ready()) inputLine.append(in.readLine());
-				 * 
-				 * in.close(); is.close();
-				 * 
-				 * manipulatePdf(inputLine.toString().replace("/rotulagem/",
-				 * "http://localhost:8080/rotulagem/"), outputFile, PageSize.A4,
-				 * PageSize.A4.getWidth());
-				 * 
-				 * os.close();
-				 */
-			}
+			// System.out.println(msm.contentMessage);
+
+			/*
+			 * String rotulos[] = { "0324122133184432970781624919997400930335" };
+			 * 
+			 * ManagerSendMailBean sendMail = new ManagerSendMailBean();
+			 * 
+			 * for (String rotulo : rotulos) {
+			 * 
+			 * String url = "http://localhost:8080/rotulagem/report-partner.jsf?rotulo=" +
+			 * rotulo; String outputFile = rotulo + ".pdf"; OutputStream os = new
+			 * FileOutputStream(outputFile);
+			 * 
+			 * URL u = new URL(url);
+			 * 
+			 * URLConnection conn = u.openConnection(); InputStream is =
+			 * conn.getInputStream();
+			 * 
+			 * BufferedReader in = new BufferedReader(new InputStreamReader(is));
+			 * StringBuffer inputLine = new StringBuffer();
+			 * 
+			 * while (in.ready()) inputLine.append(in.readLine());
+			 * 
+			 * in.close(); is.close();
+			 * 
+			 * manipulatePdf(inputLine.toString().replace("/rotulagem/",
+			 * "http://localhost:8080/rotulagem/"), outputFile, PageSize.A4,
+			 * PageSize.A4.getWidth());
+			 * 
+			 * os.close();
+			 * 
+			 * Rotulo model = queryRotulo(rotulo);
+			 * 
+			 * RotuloMailMessage message = new RotuloMailMessage();
+			 * 
+			 * message.setRecipientList("leandro1604@gmail.com",
+			 * "vanessa@registroin.com.br", "sobcontrolesp@gmail.com");
+			 * message.setAttachmentFilePath(
+			 * "/Users/digitallam/workspace/src/registroIn/rotulagem/" + rotulo + ".pdf");
+			 * message.setProductName(model.getProduto());
+			 * message.setClientName(model.getClient().getNome());
+			 * 
+			 * sendMail.sendRotuloMail(message);
+			 * 
+			 * }
+			 */
 		} catch (Exception e) {
 			LOGGER.severe(e.getMessage());
 		}
 
 	}
 
-	public static void manipulatePdf(String htmlSource, String pdfDest,	PageSize	pageSize, float screenWidth) throws IOException {
-		
-		PdfWriter 	writer = new PdfWriter(pdfDest);
+	public static void manipulatePdf(String htmlSource, String pdfDest, PageSize pageSize, float screenWidth)
+			throws IOException {
+
+		PdfWriter writer = new PdfWriter(pdfDest);
 		PdfDocument pdfDoc = new PdfDocument(writer);
 
 		pdfDoc.setTagged();
@@ -156,10 +178,10 @@ public class RotulagemApp {
 
 		HtmlConverter.convertToPdf(htmlSource, pdfDoc, converterProperties);
 		pdfDoc.close();
-		
+
 	}
 
-	private static MongoCollection<Document> getCollection() {
+	private static MongoCollection<Document> getCollection(final String collectionName) {
 
 		MongoCollection<Document> collection = null;
 
@@ -170,7 +192,7 @@ public class RotulagemApp {
 			}
 
 			MongoDatabase database = mongoDbClient.getDatabase("registroin");
-			collection = database.getCollection("rotulos");
+			collection = database.getCollection(collectionName);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -179,9 +201,9 @@ public class RotulagemApp {
 	}
 
 	private static void sendMail() {
-			//email("/Users/digitallam/workspace/src/registroIn/rotulagem/0265351433445692959508476019956415586051.pdf","KEM" ,"Baralho de Arroz");
-		
-		
+		// email("/Users/digitallam/workspace/src/registroIn/rotulagem/0265351433445692959508476019956415586051.pdf","KEM"
+		// ,"Baralho de Arroz");
+
 		/*
 		 * String[] recipientList = emailDestinatario.split(",");
 		 * 
@@ -236,22 +258,21 @@ public class RotulagemApp {
 		 * tr.close();
 		 * 
 		 * } catch (MessagingException e) { e.printStackTrace(); }
-		 */  
+		 */
 
 	}
-	
+
 	private static Rotulo queryRotulo(final String documentId) {
 
 		Rotulo result = null;
 
 		try {
-
+			 
 			ManagerRotuloBean managerRotuloBean = new ManagerRotuloBean();
 
-			MongoCollection<Document> collection = getCollection();
+			MongoCollection<Document> collection = getCollection("rotulos");
 
-			FindIterable<Document> iterable = collection
-					.find(Filters.eq("_id", documentId));
+			FindIterable<Document> iterable = collection.find(Filters.eq("_id", documentId));
 
 			MongoCursor<Document> cursor = iterable.cursor();
 
@@ -336,8 +357,6 @@ public class RotulagemApp {
 
 		Client document = new Client();
 		document.setNome(model.getString("nome"));
-		document.setProduto(model.getString("produto"));
-		document.setEmail(model.getString("email"));
 
 		return document;
 	}
@@ -468,8 +487,6 @@ public class RotulagemApp {
 
 			Client client = new Client();
 			client.setNome("Parmalat");
-			client.setProduto("Leite de Texugo 1L");
-			client.setEmail("qualidade@parmalat.com.br");
 
 			QuantidadeNutricional quantidadePorcao = new QuantidadeNutricional();
 			quantidadePorcao.setValorEnergetico("278.0kcal/1156.0kJ g");
@@ -583,7 +600,7 @@ public class RotulagemApp {
 			// instance.buildSimpleObject(model.getIngredientes()));
 			rotulo.append("produtor", instance.buildSimpleObject(model.getProdutor()));
 
-			getCollection().replaceOne(Filters.eq("_id", model.getId()), rotulo, new ReplaceOptions().upsert(true));
+			getCollection("rotulos").replaceOne(Filters.eq("_id", model.getId()), rotulo, new ReplaceOptions().upsert(true));
 
 		} catch (Exception e) {
 			e.printStackTrace();

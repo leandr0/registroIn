@@ -1,9 +1,12 @@
 /**
  * 
  */
-package com.lrgoncalves.registroin.rotulagem;
+package com.lrgoncalves.registroin.rotulagem.mail;
 
 import java.io.Serializable;
+import java.util.concurrent.Future;
+
+import com.lrgoncalves.registroin.rotulagem.mail.exception.SendRotuloMailExcpetion;
 
 /**
  * @author digitallam
@@ -44,11 +47,11 @@ public interface SendMailBean extends Serializable {
 			"</style>\n" + 
 			"</head>\n" + 
 			"<body>\n" + 
-			"<p> Prezado $cliente,</p>\n" + 
+			"<p> Prezad@(s) $cliente</p>\n" + 
 			"\n" + 
 			"<p>Anexo análise de rótulo para o produto \"$produto\".</p>\n" + 
 			"\n" + 
-			"<p>Obrigado pela confiança,</p>\n" + 
+			"<p>Obrigada pela confiança,</p>\n" + 
 			"\n" + 
 			"<strong>Vanessa Tacchi</strong>\n" + 
 			"   \n" + 
@@ -97,12 +100,6 @@ public interface SendMailBean extends Serializable {
 			"</html>\n" + 
 			"";
 	
-	final static String protocol = "smtp";
-	final static String host = "email-ssl.com.br";
-	final static String username = "vanessa@registroin.com.br";
-	final static String passwd = "";///"Gc#n74Su!L@8";
-	final static String port = "587";
-
-	public void sendRotuloMail(RotuloMailMessage message) throws SendRotuloMailExcpetion;
+	public Future<Void>  sendRotuloMail(RotuloMailMessage message) throws SendRotuloMailExcpetion;
 	
 }

@@ -31,8 +31,9 @@ fieldset
   max-width:500px;
   padding:16px;
    border-radius: 20px;
-  **/	
+  	
   background-color: #edf1f5;
+  **/
 }
 
 
@@ -95,7 +96,7 @@ div{
 }
 
 #page {
-	margin-top: 2%;
+	margin-top: 1%;
 	background: #ffffff;
 	width: 960px;
 	margin-left: auto;
@@ -105,6 +106,20 @@ div{
 	border-left: solid 1px #a0a0a0;
 	border-top: solid 1px #a0a0a0;
 }
+
+#sub-page {
+	margin-top: 1%;
+	margin-bottom: 2%;
+	background: #ffffff;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5%;
+	border-right: solid 1px #a0a0a0;
+	border-bottom: solid 1px #a0a0a0;
+	border-left: solid 1px #a0a0a0;
+	border-top: solid 1px #a0a0a0;
+}
+
 
 #page-report {
 	margin-top: 2%;
@@ -260,6 +275,21 @@ td{
 	text-align: left;
 }
 
+.client_product_information{
+  display: inline-block;
+  width: 60%;
+  vertical-align: top;
+  text-align: left;
+}
+
+
+.rotulo_actions{
+  display: inline-block;
+  width: 39%;
+  vertical-align: top;
+  text-align: left;
+}
+
 .ux_function{
 	position: absolute;
     right: 15px;
@@ -267,6 +297,8 @@ td{
     margin-top: 22px;
     text-align: left;
 }
+
+
 
 .ux_function fieldset{
     padding-bottom: 40px;
@@ -594,6 +626,44 @@ striping:
   }
 }
 
+
+#div_new_client .ui-panel-content .ui-panelgrid{
+	border-style:none;
+	border-color:transparent !important;
+	border-top-style:none;
+}
+
+.ui-panelgrid .ui-widget-content .ui-panelgrid-cell{
+	border-style:none;
+	border-color:rgba(0,0,0,0);
+	border-bottom-style:solid;
+	border-right-style:solid;
+	border-top-style:solid;
+	border-left-style:solid;
+}
+
+.ui-panelgrid-header .ui-panelgrid-cell{
+	border-style:none;
+	border-color:transparent !important;
+	border-left-style:solid;
+	border-bottom-style:solid;
+	border-right-style:solid;
+	border-top-style:solid;
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height:100%;
+    left: 0;
+    top: 0;
+    display: none;
+    align-items: center;
+    background-color: #000;
+    z-index: 10;
+    opacity: 0.5;
+}
+
 #loading-overlay {
     position: absolute;
     width: 100%;
@@ -603,7 +673,7 @@ striping:
     display: none;
     align-items: center;
     background-color: #000;
-    z-index: 999;
+    z-index: 10;
     opacity: 0.5;
 }
 .loading-icon{ 
@@ -624,6 +694,29 @@ striping:
 	-webkit-animation:spin 1s linear infinite;
 	-moz-animation:spin 1s linear infinite;
 	animation:spin 1s linear infinite;
+}
+.btnEdit{
+	border-radius: 0px;
+	background-image: url("#{resource['images/edit-row.png']}") !important;
+	background-size: 15px 15px;
+	background-color: transparent !important;
+}
+.btnReviewing{
+	border-radius: 0px;
+	background-image: url("#{resource['images/reviewing.png']}") !important;
+	background-size: 15px 15px;
+	background-color: transparent !important;
+}
+.btnSendEmail{
+	border-radius: 0px;
+	background-image: url("#{resource['images/send-email.png']}") !important;
+	background-size: 15px 15px;
+	background-color: transparent !important;
+}
+.btnDetail {
+	border-radius: 0px;
+	background-image: url("#{resource['images/show-property.png']}") !important;
+	background-size: 15px 15px;
 }
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }

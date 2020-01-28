@@ -14,11 +14,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.StringUtils;
-import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
+import com.lrgoncalves.registroin.rotulagem.data.entity.StatusType;
 
 /**
  * @author digitallam
@@ -33,24 +32,21 @@ public class UIInitialBean extends UIAbstractBean {
 	 */
 	private static final long serialVersionUID = -3036319342392818852L;
 
-
 	private final Logger LOGGER = Logger.getLogger(UIInitialBean.class.getName());
 
-	
 	private String searchRotuloQuery;
-	
+
 	private List<Rotulo> rotulos;
-	
-	
+
 	private Rotulo selectedRotulo;
-	
+
 	public String save() {
 
 		return "rotulo";
 	}
 
 	public String report() {
-		
+
 		return "report";
 	}
 
@@ -59,45 +55,114 @@ public class UIInitialBean extends UIAbstractBean {
 		rotulos = new LinkedList<Rotulo>();
 		searchRotuloQuery = "";
 	}
-	
+
 	public void searchRotulo() {
 		try {
-			
-			if(!StringUtils.isAllBlank(searchRotuloQuery))
-				rotulos = rotuloDataAccess.searchByDescription(searchRotuloQuery);
-			
-			Thread.sleep(2000);
-			
+
+			rotulos = rotuloDataAccess.searchByDescription(searchRotuloQuery);
+
+			Thread.sleep(1000);
+
 		} catch (Throwable e) {
 			LOGGER.severe(e.getMessage());
 		}
 	}
 
-	public void onRowSelect(SelectEvent event) {
-		
-        FacesMessage msg = new FacesMessage("Rotulo Selected", ((Rotulo) event.getObject()).getId());
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        
-        try {
-        	
-        	Rotulo transferObject = (Rotulo) event.getObject();
-        	
-        	setSessionAttribute("fromPage", "home");
-        	
-        	setSessionAttribute("rotulo", transferObject);
-        	
+	public void onRowSelect() {
+		/**
+		 * FacesMessage msg = new FacesMessage("Rotulo Selected", ((Rotulo)
+		 * event.getObject()).getId());
+		 * FacesContext.getCurrentInstance().addMessage(null, msg);
+		 **/
+
+		try {
+
+			Rotulo transferObject = selectedRotulo;
+
+			setSessionAttribute("fromPage", "home");
+
+			setSessionAttribute("rotulo", transferObject);
+
 			getExternalContext().redirect("report.jsf");
 		} catch (IOException e) {
 			LOGGER.severe(e.getMessage());
 		}
-        
-    }
+
+	}
+
+	public void sendByEmailChangingStatus() {
+
+		try {
+
+			switch (selectedRotulo.getStatus()) {
+			case EM_ANALISE:
+				selectedRotulo.setStatus(StatusType.ENVIADO);
+				rotuloDataAccess.updateStatus(selectedRotulo.getId(), StatusType.ENVIADO);
+				break;
+
+			case REVISAO:
+				selectedRotulo.setStatus(StatusType.RE_ENVIADO);
+				rotuloDataAccess.updateStatus(selectedRotulo.getId(), StatusType.RE_ENVIADO);
+				break;
+			default:
+				break;
+			}
+		
+			for (Rotulo rtl : rotulos) {
+			
+				if(rtl.getId().equalsIgnoreCase(selectedRotulo.getId())) {
+					rtl.setStatus(selectedRotulo.getStatus());
+					break;
+				}
+			}
+			
+			Runnable runnable = () -> {
+			    try {
+			    	reportBean.sendReportByEmail(selectedRotulo);
+			    }catch (Throwable e) {
+			        LOGGER.severe(e.getMessage());
+			    }
+			};
+
+			Thread thread = new Thread(runnable);
+			thread.start();
+			
+		} catch (Exception e) {
+			LOGGER.severe(e.getMessage());
+		}
+
+	}
+	
+	public void updateStatus() {
+
+		try {
+
+			if(selectedRotulo.getStatus() != StatusType.REVISAO) {
+				selectedRotulo.setStatus(StatusType.REVISAO);
+				rotuloDataAccess.updateStatus(selectedRotulo.getId(), StatusType.REVISAO);
+			}
+			
+			
+			for (Rotulo rtl : rotulos) {
+				
+				if(rtl.getId().equalsIgnoreCase(selectedRotulo.getId())) {
+					rtl.setStatus(selectedRotulo.getStatus());
+					break;
+				}
+			}
+			
+			
+		} catch (Exception e) {
+			LOGGER.severe(e.getMessage());
+		}
+
+	}
 	
 	public void onRowUnselect(UnselectEvent event) {
-        FacesMessage msg = new FacesMessage("Rotulo Unselected", ((Rotulo) event.getObject()).getId());
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
-	
+		FacesMessage msg = new FacesMessage("Rotulo Unselected", ((Rotulo) event.getObject()).getId());
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
 	public String getSearchRotuloQuery() {
 		return searchRotuloQuery;
 	}
@@ -121,6 +186,5 @@ public class UIInitialBean extends UIAbstractBean {
 	public void setSelectedRotulo(Rotulo selectedRotulo) {
 		this.selectedRotulo = selectedRotulo;
 	}
-	
-	
+
 }

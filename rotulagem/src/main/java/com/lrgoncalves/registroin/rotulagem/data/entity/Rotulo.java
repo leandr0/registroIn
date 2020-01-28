@@ -75,6 +75,8 @@ public class Rotulo implements Serializable {
 	private SimpleObject produtor;
 	
 	private Azeite azeite;
+	
+	private String produto;
 
 	public Rotulo() {
 		
@@ -335,5 +337,13 @@ public class Rotulo implements Serializable {
 
 	public void setAzeite(Azeite azeite) {
 		this.azeite = azeite;
+	}
+
+	public String getProduto() {
+		return produto;
+	}
+
+	public void setProduto(String produto) {
+		this.produto = produto;
 	}
 }

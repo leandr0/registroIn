@@ -1,30 +1,30 @@
 /**
  * 
  */
-package com.lrgoncalves.registroin.rotulagem;
+package com.lrgoncalves.registroin.rotulagem.data.exception;
 
 /**
  * @author digitallam
  *
  */
-public class SendRotuloMailExcpetion extends Exception {
+public class PersistClientException extends Exception {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3153794884167422295L;
+	private static final long serialVersionUID = -3146959777882350698L;
 
 	/**
 	 * 
 	 */
-	public SendRotuloMailExcpetion() {
+	public PersistClientException() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param message
 	 */
-	public SendRotuloMailExcpetion(String message) {
+	public PersistClientException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
@@ -32,7 +32,7 @@ public class SendRotuloMailExcpetion extends Exception {
 	/**
 	 * @param cause
 	 */
-	public SendRotuloMailExcpetion(Throwable cause) {
+	public PersistClientException(Throwable cause) {
 		super(cause);
 		// TODO Auto-generated constructor stub
 	}
@@ -41,7 +41,7 @@ public class SendRotuloMailExcpetion extends Exception {
 	 * @param message
 	 * @param cause
 	 */
-	public SendRotuloMailExcpetion(String message, Throwable cause) {
+	public PersistClientException(String message, Throwable cause) {
 		super(message, cause);
 		// TODO Auto-generated constructor stub
 	}
@@ -52,7 +52,7 @@ public class SendRotuloMailExcpetion extends Exception {
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public SendRotuloMailExcpetion(String message, Throwable cause, boolean enableSuppression,
+	public PersistClientException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 		// TODO Auto-generated constructor stub

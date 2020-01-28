@@ -1,4 +1,4 @@
-package com.lrgoncalves.registroin.rotulagem.model;
+package com.lrgoncalves.registroin.rotulagem.data.entity;
 
 import java.io.Serializable;
 

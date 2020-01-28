@@ -68,22 +68,66 @@
 					value="#{initial_ui.rotulos}" selectionMode="single"
 					selection="#{initial_ui.selectedRotulo}" rowKey="#{rotulo.id}"
 					rendered="#{not empty initial_ui.rotulos}"
-					onRowClick="showDiv('#page-report'); hideDiv('#page');hideDiv('#menu_bar')"
 					rows="10"
                  	paginator="true"
                  	paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  	rowsPerPageTemplate="5,10,20,30,40,50"
-                 	sortMode="multiple">
-					<p:ajax event="rowSelect" listener="#{initial_ui.onRowSelect}" />
-					<p:column headerText="Produto" sortBy="#{rotulo.client.produto}">
-						<h:outputText value="#{rotulo.client.produto}" />
+                 	sortMode="multiple"
+                 	>
+					<p:column style="width:16px">
+						<p:rowToggler />
+					</p:column>
+						<p:column style="width:32px;text-align: center">
+			            <p:commandButton update="data_table_rotulos" icon="btnDetail" title="View" action="#{initial_ui.onRowSelect}" style="background:none;">
+			                <f:setPropertyActionListener value="#{rotulo}" target="#{initial_ui.selectedRotulo}" />
+			            </p:commandButton>
+			        </p:column>
+					<p:column headerText="Produto" sortBy="#{rotulo.produto}">
+						<h:outputText value="#{rotulo.produto}" />
 					</p:column>
 					<p:column headerText="Cliente" sortBy="#{rotulo.client.nome}"  width="20%">
 						<h:outputText value="#{rotulo.client.nome}" />
 					</p:column>
-					<p:column headerText="Data" sortBy="#{rotulo.data}" width="10%">
-						<h:outputText value="#{rotulo.data}" />
+					<p:column headerText="Status" sortBy="#{rotulo.status}" width="10%" style="text-align: center;">
+						<p:graphicImage name="images/survey.png"  width="18" rendered="#{rotulo.status == 'EM_ANALISE'}" />
+						<p:graphicImage name="images/received.png"  width="18" rendered="#{rotulo.status == 'ENVIADO'}"/>
+						<p:graphicImage name="images/reviewing.png"  width="18" rendered="#{rotulo.status == 'REVISAO'}" />
+						<p:graphicImage name="images/send-email-2.png"  width="18" rendered="#{rotulo.status == 'RE_ENVIADO'}"/>
 					</p:column>
+					
+					<p:column headerText="Data" sortBy="#{rotulo.data}" width="10%">
+						<h:outputText value="#{rotulo.data}"  />
+					</p:column>
+					
+					<p:rowExpansion>
+						<p:panelGrid cellpadding="5">
+							<p:commandButton 
+								update="data_table_rotulos"
+								action="#{initial_ui.sendByEmailChangingStatus}"
+								title="Enviar"
+								value="Enviar"
+								style="background:none;"
+								onclick="showDiv('#loading-overlay');"
+								oncomplete="hideLoading('#loading-overlay')"
+								icon="btnSendEmail">
+								 <f:setPropertyActionListener value="#{rotulo}" target="#{initial_ui.selectedRotulo}" />
+							</p:commandButton>	
+							<p:commandButton 
+								update="data_table_rotulos"
+								action="#{initial_ui.updateStatus}"
+								title="Enviar"
+								value="Nova análise"
+								icon="btnReviewing" 
+								onclick="showDiv('#loading-overlay');"
+								oncomplete="hideLoading('#loading-overlay')"
+								style="background:none;">
+								 <f:setPropertyActionListener value="#{rotulo}" target="#{initial_ui.selectedRotulo}" />
+							</p:commandButton>	
+
+							
+						</p:panelGrid>
+					</p:rowExpansion>
+
 				</p:dataTable>
 			</p:panel>
 		</div>

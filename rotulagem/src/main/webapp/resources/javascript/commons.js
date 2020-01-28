@@ -25,6 +25,10 @@ function showDiv(idDiv){
 	jQuery(idDiv).show();
 }
 
+function showDialog(idDialog) {
+	PF(idDialog).show();
+}
+
 function toggle(idComponent){
 	jQuery(idComponent).toggle();
 }

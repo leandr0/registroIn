@@ -2,8 +2,6 @@ package com.lrgoncalves.registroin.rotulagem.data.entity;
 
 import java.io.Serializable;
 
-import com.lrgoncalves.registroin.rotulagem.model.TabelaNutricional;
-
 public class InformacaoNutricional implements Serializable {
 
 

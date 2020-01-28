@@ -16,10 +16,13 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.primefaces.event.SelectEvent;
 
 import com.lrgoncalves.registroin.rotulagem.CalculoNutricional;
 import com.lrgoncalves.registroin.rotulagem.data.entity.ClassificacaoAzeite;
 import com.lrgoncalves.registroin.rotulagem.data.entity.ClassificacaoAzeiteItem;
+import com.lrgoncalves.registroin.rotulagem.data.entity.Client;
+import com.lrgoncalves.registroin.rotulagem.data.entity.Contact;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
 import com.lrgoncalves.registroin.rotulagem.data.entity.SimpleObject;
 
@@ -34,15 +37,29 @@ public class UIRotuloBean extends UIAbstractBean {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -345039370128406195L;
+	private static final long serialVersionUID = -2130827261460235102L;
 
 	private static final Logger LOGGER = Logger.getLogger(UIRotuloBean.class);
 
 	private static final String DESCRICAO_ALTURA_MINIMA = "Este ítem deve apresentar altura mínima de 2mm.";
-	
+
 	private static final String DERIVADOS_LACTEOS_LEGISLACAO = "De acordo com a RDC 136/17 ANVISA, ";
-	
+
 	private Rotulo rotulo;
+
+	private Client client;
+
+	private Client selectedClient;
+
+	private Client editedClient;
+
+	private List<Client> clientList;
+
+	private Client newClient;
+
+	private Contact newContact;
+
+	private Contact selectedContact;
 
 	private CalculoNutricional calculoNutricional;
 
@@ -95,36 +112,40 @@ public class UIRotuloBean extends UIAbstractBean {
 	private SimpleView transgenico;
 
 	private SimpleView registroMAPA;
-	
+
 	private SimpleView azeite;
-	
+
 	private SimpleView denominacaoAzeite;
-	
+
 	private SimpleView classificacaoAzeite;
 
 	private String emailPattern = "/^(([^<>()\\[\\]\\.,;:\\s@\\\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i";
 
 	private boolean selectAll;
-	
+
 	private SimpleObject selectedItemOutros;
 
 	@PostConstruct
 	public void init() {
-		
+
 		resetSimpleObjects();
-		
+
 		resetListBoxes();
-		
+
 		resetRotulo();
-		
+
 		setSelectAll(false);
-		
+
 		handleBooleanValues(isSelectAll());
 	}
-	
+
 	private void resetRotulo() {
-		
+
 		rotulo = new Rotulo();
+
+		client = new Client();
+
+		clientList = new LinkedList<Client>();
 
 		calculoNutricional = new CalculoNutricional();
 
@@ -135,52 +156,52 @@ public class UIRotuloBean extends UIAbstractBean {
 		rotulo.setData(dTF.format(LocalDateTime.now()));
 
 		resetAzeite();
-		
+
 		resetDenominacaoProduto();
-		
+
 		resetIndustriaOrigem();
-		
+
 		resetDerivadosLacteos();
-		
+
 		resetAlergicos();
-		
+
 		resetProdutor();
-		
+
 		resetImportador();
-		
+
 		resetDistribuidor();
-		
+
 		resetOutros();
 
 		resetConservacaoProdutos();
-				
+
 		resetGlutenAlergenos();
-		
+
 		resetPrazoValidade();
-		
+
 		resetDataFrabricacao();
-		
+
 		resetLote();
-		
+
 		resetInformacaoNutricional();
-		
+
 		resetTartrazina();
-		
+
 		resetAspartameFenilalanina();
-		
+
 		resetSac();
-		
+
 		resetTransgenico();
-		
+
 		resetRegistroMAPA();
-		
+
 		resetIngredientes();
 
 	}
 
 	private void resetIngredientes() {
 		rotulo.setIngredientes(new SimpleObject("Corrigir os ingredientes para ....."));
-		
+
 	}
 
 	private void resetRegistroMAPA() {
@@ -191,49 +212,49 @@ public class UIRotuloBean extends UIAbstractBean {
 	private void resetTransgenico() {
 		rotulo.setTransgenico(
 				new SimpleObject("Se presente em quantidade superior a 1%, inserir o logo de TRANSGENICO no rótulo."));
-		
+
 	}
 
 	private void resetSac() {
 		rotulo.setSac(new SimpleObject("Inserir informação para SAC."));
-		
+
 	}
 
 	private void resetAspartameFenilalanina() {
 		rotulo.setAspartameFenilalanina(
 				new SimpleObject("Inserir a informação: \"CONTÉM FENILALANINA\", em caixa alta e negrito"));
-		
+
 	}
 
 	private void resetTartrazina() {
 		rotulo.setTartrazina(new SimpleObject(
 				"A lista de ingredientes deve apresentar o nome do corante tartrazina INS 102 por extenso, em caixa alta e negrito."));
-		
+
 	}
 
 	private void resetInformacaoNutricional() {
 		rotulo.getInformacaoNutricional().setDescricao(
 				"A Informação Nutricional deve seguir EXATAMENTE o modelo permitido pela ANVISA, Com Trans em itálico, e seus valores devem ser ajustados para:");
-		
+
 		rotulo.getInformacaoNutricional().setLegislacao(
 				"(*) Valores Diários de referência com base em uma dieta de 2000kcal ou 8400kJ. Seus valores diários podem ser maiores ou menores dependendo das necessidades energéticas.(**) VD não estabelecido.");
 
-		
 	}
 
 	private void resetLote() {
 		rotulo.setLote(new SimpleObject("Inserir número do Lote."));
-		
+
 	}
 
 	private void resetDataFrabricacao() {
 		rotulo.setDataFabricacao(new SimpleObject("Inserir Data de Fabricação no formato DD/MM/AA"));
-		
+
 	}
 
 	private void resetPrazoValidade() {
-		rotulo.setPrazoValidade(new SimpleObject("De acordo com a RDC 259/02, inserir Data de Validade no formato DD/MM/AA"));
-		
+		rotulo.setPrazoValidade(
+				new SimpleObject("De acordo com a RDC 259/02, inserir Data de Validade no formato DD/MM/AA"));
+
 	}
 
 	private void resetGlutenAlergenos() {
@@ -245,12 +266,12 @@ public class UIRotuloBean extends UIAbstractBean {
 
 		Map<String, String> conservacaoProduto = new LinkedHashMap<String, String>();
 
-		conservacaoProduto.put("Validade a -18˚C(freezer):"		, "Conforme prazo de validade.");
-		conservacaoProduto.put("Validade a -4˚C (congelador):"	, "XX meses.");
-		conservacaoProduto.put("Validade a 4˚C (refrigerador):"	, "XX dias.");
+		conservacaoProduto.put("Validade a -18˚C(freezer):", "Conforme prazo de validade.");
+		conservacaoProduto.put("Validade a -4˚C (congelador):", "XX meses.");
+		conservacaoProduto.put("Validade a 4˚C (refrigerador):", "XX dias.");
 
 		rotulo.getConservacaoProduto().setValidadeProduto(conservacaoProduto);
-		
+
 	}
 
 	private void resetOutros() {
@@ -259,77 +280,88 @@ public class UIRotuloBean extends UIAbstractBean {
 
 	private void resetDistribuidor() {
 		rotulo.setDistribuidor(new SimpleObject("Inserir informações do Distribuídor (nome e endereço)."));
-		
+
 	}
 
 	private void resetImportador() {
 		rotulo.setImportador(new SimpleObject("Inserir informações do Importador (nome e endereço)."));
-		
+
 	}
 
 	private void resetProdutor() {
 		rotulo.setProdutor(new SimpleObject("Inserir informações completas do produtor (nome e endereço)"));
-		
+
 	}
 
 	private void resetAlergicos() {
-		rotulo.setAlergicos(new SimpleObject(
-				DERIVADOS_LACTEOS_LEGISLACAO+"inserir a inscrição \"ALÉRGICOS: CONTÉM XXXXX E DERIVADOS DE XXXXX\", em caixa alta e negrito, logo após a inscrição \"NÃO CONTÉM GLÚTEN\" "+DESCRICAO_ALTURA_MINIMA));
+		rotulo.setAlergicos(new SimpleObject(DERIVADOS_LACTEOS_LEGISLACAO
+				+ "inserir a inscrição \"ALÉRGICOS: CONTÉM XXXXX E DERIVADOS DE XXXXX\", em caixa alta e negrito, logo após a inscrição \"NÃO CONTÉM GLÚTEN\" "
+				+ DESCRICAO_ALTURA_MINIMA));
 	}
 
 	private void resetDerivadosLacteos() {
-		rotulo.setDerivadosLacteos(new SimpleObject(
-				DERIVADOS_LACTEOS_LEGISLACAO+"inserir a inscrição \"CONTÉM LACTOSE\" logo após a inscrição \"NÃO CONTÉM GLÚTEN\". Em negrito e caixa alta. "+DESCRICAO_ALTURA_MINIMA ));
-		
+		rotulo.setDerivadosLacteos(new SimpleObject(DERIVADOS_LACTEOS_LEGISLACAO
+				+ "inserir a inscrição \"CONTÉM LACTOSE\" logo após a inscrição \"NÃO CONTÉM GLÚTEN\". Em negrito e caixa alta. "
+				+ DESCRICAO_ALTURA_MINIMA));
+
 	}
 
 	private void resetIndustriaOrigem() {
 		rotulo.setIndustriaOrigem(new SimpleObject("Acrescentar os termos : - \"Indústria <País de Origem>\""));
-		
+
 	}
 
 	private void resetDenominacaoProduto() {
-		rotulo.setDenominacaoProduto(new SimpleObject("A denominação do produto deve estar no painel principal do rótulo. Sugerimos adequar a denominação do produto para ...."));
+		rotulo.setDenominacaoProduto(new SimpleObject(
+				"A denominação do produto deve estar no painel principal do rótulo. Sugerimos adequar a denominação do produto para ...."));
 	}
-	
+
 	private void resetListBoxes() {
 
 		final String aromatizanteLegislacao = "Conforme o informe técnico 26/07 ANVISA, ";
-		
+
 		aromatizantes = new ArrayList<String>();
-		aromatizantes.add(aromatizanteLegislacao+"nserir o termo \"CONTÉM AROMATIZANTE\" no painel principal. Em caixa alta.");
-		aromatizantes.add(aromatizanteLegislacao+"inserir o termo \"AROMATIZADO ARTIFICIALMENTE\" no painel principal. Em caixa alta e negrito.");
-		aromatizantes.add(aromatizanteLegislacao+"inserir o termo \"Contém aromatizante sintético idêntico ao natural\" no painel principal. Em negrito.");
-		
-		
+		aromatizantes.add(
+				aromatizanteLegislacao + "nserir o termo \"CONTÉM AROMATIZANTE\" no painel principal. Em caixa alta.");
+		aromatizantes.add(aromatizanteLegislacao
+				+ "inserir o termo \"AROMATIZADO ARTIFICIALMENTE\" no painel principal. Em caixa alta e negrito.");
+		aromatizantes.add(aromatizanteLegislacao
+				+ "inserir o termo \"Contém aromatizante sintético idêntico ao natural\" no painel principal. Em negrito.");
+
 		final String glutenLegislacao = "De acordo com a Lei 10674/03, ";
-		
+
 		glutens = new ArrayList<String>();
-		glutens.add(glutenLegislacao+"inserir a inscrição \"NÃO CONTÉM GLÚTEN\" logo após a lista de ingredientes. Em caixa alta e negrito. ");
-		glutens.add(glutenLegislacao+"inserir a inscrição \"CONTÉM GLÚTEN\" logo após a lista de ingredientes. Em caixa alta e negrito. ");
-		
+		glutens.add(glutenLegislacao
+				+ "inserir a inscrição \"NÃO CONTÉM GLÚTEN\" logo após a lista de ingredientes. Em caixa alta e negrito. ");
+		glutens.add(glutenLegislacao
+				+ "inserir a inscrição \"CONTÉM GLÚTEN\" logo após a lista de ingredientes. Em caixa alta e negrito. ");
+
 	}
-	
+
 	private void resetAzeite() {
-		
-		final String denominacaoAzeiteDesc = "Certifique-se que as letras do tipo de azeite possuem a mesma dimensão dos caractéres indicativos do peso, conforme IN 01/2012: \n" + 
-				"A informação relativa ao tipo de azeite oliva constantes na marcação ou rotulagem deve ser grafada na principal e em carácteres do mesmo tamanho que as dimensões especificadas para o conteúdo líquido previstas em legislação específica.";
-		
+
+		final String denominacaoAzeiteDesc = "Certifique-se que as letras do tipo de azeite possuem a mesma dimensão dos caractéres indicativos do peso, conforme IN 01/2012: \n"
+				+ "A informação relativa ao tipo de azeite oliva constantes na marcação ou rotulagem deve ser grafada na principal e em carácteres do mesmo tamanho que as dimensões especificadas para o conteúdo líquido previstas em legislação específica.";
+
 		final String classificacaoAzeiteDesc = "O Azeite de Oliva Extra Virgem, deve seguir os limites de tolerância estabelecidos pelo MAPA, conforme valores definidos na tabela abaixo:";
-		
-		
+
 		rotulo.getAzeite().setDenominacao(new SimpleObject(denominacaoAzeiteDesc));
-		
+
 		rotulo.getAzeite().setClassificacao(new ClassificacaoAzeite(classificacaoAzeiteDesc));
-		
-		rotulo.getAzeite().getClassificacao().setAcidezLivre(new ClassificacaoAzeiteItem("Acidez Livre (%)","≤ 0,80","≤ 2,0"));
-		rotulo.getAzeite().getClassificacao().setIndicesPeroxidos(new ClassificacaoAzeiteItem("Índices de Peróxidos (meq/kg)","≤ 20,0","≤ 20,0"));
-		rotulo.getAzeite().getClassificacao().setExtEspecUltravioleta232(new ClassificacaoAzeiteItem("Extinção específica no ultravioleta 232nm","≤ 2,50","≤ 2,6"));
-		rotulo.getAzeite().getClassificacao().setExtEspecUltravioleta270(new ClassificacaoAzeiteItem("Extinção específica no ultravioleta 270nm","≤ 0,22","≤ 0,25"));
-		rotulo.getAzeite().getClassificacao().setExtEspecUltravioletaDelta(new ClassificacaoAzeiteItem("Extinção específica no ultravioleta Delta K","≤ 0,01","≤ 0,01"));
-		
+
+		rotulo.getAzeite().getClassificacao()
+				.setAcidezLivre(new ClassificacaoAzeiteItem("Acidez Livre (%)", "≤ 0,80", "≤ 2,0"));
+		rotulo.getAzeite().getClassificacao()
+				.setIndicesPeroxidos(new ClassificacaoAzeiteItem("Índices de Peróxidos (meq/kg)", "≤ 20,0", "≤ 20,0"));
+		rotulo.getAzeite().getClassificacao().setExtEspecUltravioleta232(
+				new ClassificacaoAzeiteItem("Extinção específica no ultravioleta 232nm", "≤ 2,50", "≤ 2,6"));
+		rotulo.getAzeite().getClassificacao().setExtEspecUltravioleta270(
+				new ClassificacaoAzeiteItem("Extinção específica no ultravioleta 270nm", "≤ 0,22", "≤ 0,25"));
+		rotulo.getAzeite().getClassificacao().setExtEspecUltravioletaDelta(
+				new ClassificacaoAzeiteItem("Extinção específica no ultravioleta Delta K", "≤ 0,01", "≤ 0,01"));
+
 	}
-	
+
 	public void calcularPorcao() {
 
 		calculoNutricional.calcularPorcao(rotulo.getInformacaoNutricional());
@@ -341,8 +373,7 @@ public class UIRotuloBean extends UIAbstractBean {
 		final double gordurasTotais = Double
 				.valueOf(rotulo.getInformacaoNutricional().getQtdPorcao().getGordurasTotais()).doubleValue();
 
-		final double vlrEnergeticoKj = calculoNutricional.
-				calculoValoEnergeticoKj(carboidratos, proteinas,
+		final double vlrEnergeticoKj = calculoNutricional.calculoValoEnergeticoKj(carboidratos, proteinas,
 				gordurasTotais);
 		final double vlrEnergeticoKcal = calculoNutricional.calculoValoEnergeticoKcal(carboidratos, proteinas,
 				gordurasTotais);
@@ -359,43 +390,44 @@ public class UIRotuloBean extends UIAbstractBean {
 
 		final int pesoLiquido = Integer.valueOf(rotulo.getPesoLiquido().getPeso());
 
-		
-		final String pesoLiquidoLegislacao = "De acordo com a portaria INMETRO 157/02, ";
-		final String indicacaoPesoLiquido  = " A indicação do peso líquido deve estar no painel frontal do rótulo.";
-		
+		final String pesoLiquidoLegislacao = "PESO LÍQUIDO - De acordo com a portaria INMETRO 157/02, ";
+		final String indicacaoPesoLiquido = " A indicação do peso líquido deve estar no painel frontal do rótulo.";
+
 		if (pesoLiquido <= 50) {
-			rotulo.getPesoLiquido().setDescricao(
-					pesoLiquidoLegislacao+"os números devem ter altura mínima de 2 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral."+indicacaoPesoLiquido);
+			rotulo.getPesoLiquido().setDescricao(pesoLiquidoLegislacao
+					+ "os números devem ter altura mínima de 2 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral."
+					+ indicacaoPesoLiquido);
 		} else if (pesoLiquido > 50 && pesoLiquido <= 200) {
-			rotulo.getPesoLiquido().setDescricao(
-					pesoLiquidoLegislacao+"os números devem ter altura mínima de 3 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral."+indicacaoPesoLiquido);
+			rotulo.getPesoLiquido().setDescricao(pesoLiquidoLegislacao
+					+ "os números devem ter altura mínima de 3 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral."
+					+ indicacaoPesoLiquido);
 		} else if (pesoLiquido > 200 && pesoLiquido <= 1000) {
-			rotulo.getPesoLiquido().setDescricao(
-					pesoLiquidoLegislacao+"os números devem ter altura mínima de 4 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral."+indicacaoPesoLiquido);
+			rotulo.getPesoLiquido().setDescricao(pesoLiquidoLegislacao
+					+ "os números devem ter altura mínima de 4 mm, e a unidade \"g\", altura mínima de 2/3 o tamanho do numeral."
+					+ indicacaoPesoLiquido);
 		} else if (pesoLiquido > 1000) {
-			rotulo.getPesoLiquido().setDescricao(
-					pesoLiquidoLegislacao+"os números devem ter altura mínima de 6 mm, e a unidade \"kg\", altura mínima de 2/3 o tamanho do numeral."+indicacaoPesoLiquido);
+			rotulo.getPesoLiquido().setDescricao(pesoLiquidoLegislacao
+					+ "os números devem ter altura mínima de 6 mm, e a unidade \"kg\", altura mínima de 2/3 o tamanho do numeral."
+					+ indicacaoPesoLiquido);
 		}
 	}
 
-	
 	public String edit() {
-		
+
 		rotulo = (Rotulo) getSessionAttribute("rotulo");
-		
+
 		buildRotuloFromReport();
-		
+
 		return "rotulo";
 	}
-	
+
 	public String novoRotulo() {
-		
+
 		clearData();
-		
+
 		return "rotulo";
 	}
-	
-	
+
 	public String report() {
 
 		int index = 1;
@@ -403,343 +435,342 @@ public class UIRotuloBean extends UIAbstractBean {
 		if (getDenominacaoProduto().isCheck()) {
 			rotulo.getDenominacaoProduto().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getDenominacaoProduto().setIndexReport(0);
 		}
 		if (getAromatizante().isCheck()) {
 			rotulo.getAromatizante().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getAromatizante().setIndexReport(0);
 		}
 
 		if (getPesoLiquido().isCheck()) {
 			rotulo.getPesoLiquido().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getPesoLiquido().setIndexReport(0);
 		}
 
 		if (getGluten().isCheck()) {
-			rotulo.getGluten().setDescricao(rotulo.getGluten().getDescricao()+DESCRICAO_ALTURA_MINIMA);
+			rotulo.getGluten().setDescricao(rotulo.getGluten().getDescricao() + DESCRICAO_ALTURA_MINIMA);
 			rotulo.getGluten().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getGluten().setIndexReport(0);
 		}
 
 		if (getIndustriaOrigem().isCheck()) {
 			rotulo.getIndustriaOrigem().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getIndustriaOrigem().setIndexReport(0);
 		}
 
 		if (getIngredientes().isCheck()) {
 			rotulo.getIngredientes().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getIngredientes().setIndexReport(0);
 		}
 
 		if (getLactose().isCheck()) {
 			rotulo.getDerivadosLacteos().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getDerivadosLacteos().setIndexReport(0);
 		}
 
 		if (getAlergico().isCheck()) {
 			rotulo.getAlergicos().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getAlergicos().setIndexReport(0);
 		}
 
 		if (getProdutor().isCheck()) {
 			rotulo.getProdutor().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getProdutor().setIndexReport(0);
 		}
 
 		if (getDistribuidor().isCheck()) {
 			rotulo.getDistribuidor().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getDistribuidor().setIndexReport(0);
 		}
 
 		if (getImportador().isCheck()) {
 			rotulo.getImportador().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getImportador().setIndexReport(0);
 		}
 
 		if (getDataFabricacao().isCheck()) {
 			rotulo.getDataFabricacao().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getDataFabricacao().setIndexReport(0);
 		}
 
 		if (getPrazoValidade().isCheck()) {
 			rotulo.getPrazoValidade().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getPrazoValidade().setIndexReport(0);
 		}
 
 		if (getLote().isCheck()) {
 			rotulo.getLote().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getLote().setIndexReport(0);
 		}
 
 		if (getGlutenAlergenos().isCheck()) {
 			rotulo.getGlutenAlergenos().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getGlutenAlergenos().setIndexReport(0);
 		}
 
 		if (getValidadeProduto().isCheck()) {
 			rotulo.getConservacaoProduto().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getConservacaoProduto().setIndexReport(0);
 		}
 
 		if (getInformacaoNutricional().isCheck()) {
 			rotulo.getInformacaoNutricional().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getInformacaoNutricional().setIndexReport(0);
 		}
 
 		if (getTartrazina().isCheck()) {
 			rotulo.getTartrazina().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getTartrazina().setIndexReport(0);
 		}
 
 		if (getFenilalanina().isCheck()) {
 			rotulo.getAspartameFenilalanina().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getAspartameFenilalanina().setIndexReport(0);
 		}
 
 		if (getSac().isCheck()) {
 			rotulo.getSac().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getSac().setIndexReport(0);
 		}
 
 		if (getTransgenico().isCheck()) {
 			rotulo.getTransgenico().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getTransgenico().setIndexReport(0);
 		}
 
 		if (getRegistroMAPA().isCheck()) {
 			rotulo.getRegistroMAPA().setIndexReport(index);
 			index++;
-		}else {
+		} else {
 			rotulo.getRegistroMAPA().setIndexReport(0);
 		}
 
-		if(getAzeite().isCheck()) {
-			
-			if(getDenominacaoAzeite().isCheck()) {
+		if (getAzeite().isCheck()) {
+
+			if (getDenominacaoAzeite().isCheck()) {
 				rotulo.getAzeite().getDenominacao().setIndexReport(index);
 				index++;
-			}else {
+			} else {
 				rotulo.getAzeite().getDenominacao().setIndexReport(0);
 			}
-			
-			if(getClassificacaoAzeite().isCheck()) {
+
+			if (getClassificacaoAzeite().isCheck()) {
 				rotulo.getAzeite().getClassificacao().setIndexReport(index);
 				index++;
-			}else {
+			} else {
 				rotulo.getAzeite().getClassificacao().setIndexReport(0);
 			}
-			
-			if(getClassificacaoAzeite().isCheck() || getDenominacaoAzeite().isCheck()) {
+
+			if (getClassificacaoAzeite().isCheck() || getDenominacaoAzeite().isCheck()) {
 				rotulo.getAzeite().setIndexReport(1);
 			}
-		}else {
+		} else {
 			rotulo.getAzeite().getDenominacao().setIndexReport(0);
 			rotulo.getAzeite().getClassificacao().setIndexReport(0);
 			rotulo.getAzeite().setIndexReport(0);
 		}
-		
+
 		if (getOutros().isCheck()) {
-			
-			for(SimpleObject outro : rotulo.getOutros()) {
+
+			for (SimpleObject outro : rotulo.getOutros()) {
 				outro.setIndexReport(index);
 				index++;
 			}
-			
-			
+
 		} /*
 			 * else { rotulo.getOutros().setIndexReport(0); }
 			 */
-		
+
 		setSessionAttribute("rotulo", rotulo);
 
 		setSessionAttribute("fromPage", "rotulo");
-		
+
 		return "report";
 	}
 
 	public String buildRotuloFromReport() {
 
-
 		if (rotulo.getDenominacaoProduto().getIndexReport() > 0) {
 			getDenominacaoProduto().setCheck(true);
-		}else {
+		} else {
 			resetDenominacaoProduto();
 		}
-		
+
 		if (rotulo.getAromatizante().getIndexReport() > 0) {
 			getAromatizante().setCheck(true);
-		}		//Listbox
+		} // Listbox
 
-		
 		if (rotulo.getPesoLiquido().getIndexReport() > 0) {
 			getPesoLiquido().setCheck(true);
-		}//Valor calculado
-		
+		} // Valor calculado
+
 		if (rotulo.getGluten().getIndexReport() > 0) {
 			getGluten().setCheck(true);
-		}//Listbox
-		
+		} // Listbox
+
 		if (rotulo.getIndustriaOrigem().getIndexReport() > 0) {
 			getIndustriaOrigem().setCheck(true);
-		}else {
+		} else {
 			resetIndustriaOrigem();
 		}
-		
+
 		if (rotulo.getIngredientes().getIndexReport() > 0) {
 			getIngredientes().setCheck(true);
-		}else {
+		} else {
 			resetIngredientes();
 		}
-		
+
 		if (rotulo.getDerivadosLacteos().getIndexReport() > 0) {
 			getLactose().setCheck(true);
-		}else {
+		} else {
 			resetDerivadosLacteos();
 		}
-		
+
 		if (rotulo.getAlergicos().getIndexReport() > 0) {
 			getAlergico().setCheck(true);
-		}else {
+		} else {
 			resetAlergicos();
 		}
-		
+
 		if (rotulo.getProdutor().getIndexReport() > 0) {
 			getProdutor().setCheck(true);
-		}else {
+		} else {
 			resetProdutor();
 		}
-		
+
 		if (rotulo.getDistribuidor().getIndexReport() > 0) {
 			getDistribuidor().setCheck(true);
-		}else {
+		} else {
 			resetDistribuidor();
 		}
-		
+
 		if (rotulo.getImportador().getIndexReport() > 0) {
 			getImportador().setCheck(true);
-		}else {
+		} else {
 			resetImportador();
 		}
-		
+
 		if (rotulo.getDataFabricacao().getIndexReport() > 0) {
 			getDataFabricacao().setCheck(true);
-		}else {
+		} else {
 			resetDataFrabricacao();
 		}
-		
+
 		if (rotulo.getPrazoValidade().getIndexReport() > 0) {
 			getPrazoValidade().setCheck(true);
-		}else {
+		} else {
 			resetPrazoValidade();
 		}
-		
+
 		if (rotulo.getLote().getIndexReport() > 0) {
 			getLote().setCheck(true);
-		}else {
+		} else {
 			resetLote();
 		}
-		
+
 		if (rotulo.getGlutenAlergenos().getIndexReport() > 0) {
 			getGlutenAlergenos().setCheck(true);
-		}else {
+		} else {
 			resetGlutenAlergenos();
 		}
-		
+
 		if (rotulo.getConservacaoProduto().getIndexReport() > 0) {
 			getValidadeProduto().setCheck(true);
-		}else {
+		} else {
 			resetConservacaoProdutos();
 		}
-		
+
 		if (rotulo.getInformacaoNutricional().getIndexReport() > 0) {
 			getInformacaoNutricional().setCheck(true);
-		}else {
+		} else {
 			resetInformacaoNutricional();
 		}
-		
+
 		if (rotulo.getTartrazina().getIndexReport() > 0) {
 			getTartrazina().setCheck(true);
-		}else {
+		} else {
 			resetTartrazina();
 		}
-		
+
 		if (rotulo.getAspartameFenilalanina().getIndexReport() > 0) {
 			getFenilalanina().setCheck(true);
-		}else {
+		} else {
 			resetAspartameFenilalanina();
 		}
-		
+
 		if (rotulo.getSac().getIndexReport() > 0) {
 			getSac().setCheck(true);
-		}else {
+		} else {
 			resetSac();
 		}
-		
-		if (rotulo.getTransgenico().getIndexReport() > 0 ) {
+
+		if (rotulo.getTransgenico().getIndexReport() > 0) {
 			getTransgenico().setCheck(true);
-		}else {
+		} else {
 			resetTransgenico();
 		}
-		
+
 		if (rotulo.getRegistroMAPA().getIndexReport() > 0) {
 			getRegistroMAPA().setCheck(true);
-		}else {
+		} else {
 			resetRegistroMAPA();
 		}
-		
-		if(rotulo.getAzeite().getIndexReport() > 0) {
+
+		if (rotulo.getAzeite().getIndexReport() > 0) {
 			getAzeite().setCheck(true);
-			
-			int indexClassificacao 	= 0;
-			int indexDenominacao 	= 0;
-			
-			if(rotulo.getAzeite().getClassificacao() != null && rotulo.getAzeite().getClassificacao().getIndexReport() > 0) {
-				indexClassificacao = 	rotulo.getAzeite().getClassificacao().getIndexReport();
-				
+
+			int indexClassificacao = 0;
+			int indexDenominacao = 0;
+
+			if (rotulo.getAzeite().getClassificacao() != null
+					&& rotulo.getAzeite().getClassificacao().getIndexReport() > 0) {
+				indexClassificacao = rotulo.getAzeite().getClassificacao().getIndexReport();
+
 				getClassificacaoAzeite().setCheck(true);
 			}
-			if(rotulo.getAzeite().getDenominacao() != null && rotulo.getAzeite().getDenominacao().getIndexReport() > 0) {
+			if (rotulo.getAzeite().getDenominacao() != null
+					&& rotulo.getAzeite().getDenominacao().getIndexReport() > 0) {
 				indexDenominacao = rotulo.getAzeite().getDenominacao().getIndexReport();
 				getDenominacaoAzeite().setCheck(true);
 			}
@@ -747,25 +778,24 @@ public class UIRotuloBean extends UIAbstractBean {
 			rotulo.getAzeite().setIndexReport(1);
 			rotulo.getAzeite().getClassificacao().setIndexReport(indexClassificacao);
 			rotulo.getAzeite().getDenominacao().setIndexReport(indexDenominacao);
-			
-		}else {
+
+		} else {
 			resetAzeite();
 		}
-		
+
 		if (!rotulo.getOutros().isEmpty()) {
 			getOutros().setCheck(true);
-		}else {
+		} else {
 			resetOutros();
 		}
-		
+
 		setSessionAttribute("rotulo", rotulo);
 
 		setSessionAttribute("fromPage", "rotulo");
-		
+
 		return "report";
 	}
 
-	
 	public void checkBoxHandle() {
 
 		if (isSelectAll()) {
@@ -820,55 +850,128 @@ public class UIRotuloBean extends UIAbstractBean {
 
 	private void resetSimpleObjects() {
 
-		denominacaoProduto 		= new SimpleView();
-		aromatizante 			= new SimpleView();
-		pesoLiquido 			= new SimpleView();
-		gluten 					= new SimpleView();
-		industriaOrigem 		= new SimpleView();
-		ingredientes 			= new SimpleView();
-		lactose					= new SimpleView();
-		validadeProduto 		= new SimpleView();
-		alergico 				= new SimpleView();
-		glutenAlergenos 		= new SimpleView();
-		outros 					= new SimpleView();
-		produtor 				= new SimpleView();
-		distribuidor 			= new SimpleView();
-		importador 				= new SimpleView();
-		dataFabricacao 			= new SimpleView();
-		prazoValidade 			= new SimpleView();
-		lote 					= new SimpleView();
-		informacaoNutricional 	= new SimpleView();
-		tartrazina 				= new SimpleView();
-		fenilalanina 			= new SimpleView();
-		sac 					= new SimpleView();
-		transgenico 			= new SimpleView();
-		registroMAPA 			= new SimpleView();
-		azeite					= new SimpleView();
-		classificacaoAzeite		= new SimpleView();
-		denominacaoAzeite		= new SimpleView();
+		denominacaoProduto = new SimpleView();
+		aromatizante = new SimpleView();
+		pesoLiquido = new SimpleView();
+		gluten = new SimpleView();
+		industriaOrigem = new SimpleView();
+		ingredientes = new SimpleView();
+		lactose = new SimpleView();
+		validadeProduto = new SimpleView();
+		alergico = new SimpleView();
+		glutenAlergenos = new SimpleView();
+		outros = new SimpleView();
+		produtor = new SimpleView();
+		distribuidor = new SimpleView();
+		importador = new SimpleView();
+		dataFabricacao = new SimpleView();
+		prazoValidade = new SimpleView();
+		lote = new SimpleView();
+		informacaoNutricional = new SimpleView();
+		tartrazina = new SimpleView();
+		fenilalanina = new SimpleView();
+		sac = new SimpleView();
+		transgenico = new SimpleView();
+		registroMAPA = new SimpleView();
+		azeite = new SimpleView();
+		classificacaoAzeite = new SimpleView();
+		denominacaoAzeite = new SimpleView();
 	}
 
 	public void addItemOutros() {
-		
-		int index = getOutros().getIndex()+1;
-		
-		rotulo.getOutros().add(new SimpleObject(index,getOutros().getValue()));
+
+		int index = getOutros().getIndex() + 1;
+
+		rotulo.getOutros().add(new SimpleObject(index, getOutros().getValue()));
 		getOutros().setValue(null);
 		getOutros().setIndex(index);
 	}
-	
+
 	public void deleteItemOutros() {
-	
+
 		int index = 0;
-		
-		for(SimpleObject so : rotulo.getOutros()) {
-			if(selectedItemOutros.getIndexReport() == so.getIndexReport()) {
+
+		for (SimpleObject so : rotulo.getOutros()) {
+			if (selectedItemOutros.getIndexReport() == so.getIndexReport()) {
 				index = rotulo.getOutros().indexOf(so);
 				break;
 			}
 		}
-		
+
 		rotulo.getOutros().remove(index);
+	}
+
+	public void searchClient() {
+
+		try {
+			LOGGER.info("Searching client with query :::: " + client.getNome());
+			clientList = clientDataAccess.searchByName(client.getNome());
+
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+
+	public void onClientListRowSelect(SelectEvent event) {
+		selectedClient = (Client) event.getObject();
+		LOGGER.info("Selecting client :::: " + selectedClient.getNome());
+	}
+
+	public void selectClientOnList() {
+
+		if (selectedClient != null)
+			rotulo.setClient(selectedClient);
+
+		selectedClient = new Client();
+		clientList = new LinkedList<Client>();
+		client = new Client();
+
+		LOGGER.info("Setting selected client ::: " + rotulo.getClient().getNome());
+
+	}
+
+	public void resetNewClient() {
+
+		newClient = new Client();
+		newContact = new Contact();
+		newClient.setContactList(new LinkedList<Contact>());
+	}
+
+	public void addNewContact() {
+		
+		if(newClient.getContactList() == null)
+			newClient.setContactList(new LinkedList<Contact>());
+			
+		newClient.getContactList().add(newContact);
+		newContact = new Contact();
+	}
+
+	public void deleteContactClient() {
+
+		int index = 0;
+
+		for (Contact co : newClient.getContactList()) {
+			if (selectedContact.getEmail() == co.getEmail()) {
+				index = newClient.getContactList().indexOf(co);
+				break;
+			}
+		}
+
+		newClient.getContactList().remove(index);
+	}
+
+	public void salvarCliente() {
+		try {
+			clientDataAccess.persistClient(newClient);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		resetNewClient();
+	}
+
+	public String editarCliente() {
+		newClient = selectedClient;
+		return null;
 	}
 	
 	public SimpleObject getSelectedItemOutros() {
@@ -1133,5 +1236,61 @@ public class UIRotuloBean extends UIAbstractBean {
 
 	public void setClassificacaoAzeite(SimpleView classificacaoAzeite) {
 		this.classificacaoAzeite = classificacaoAzeite;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
+	}
+
+	public List<Client> getClientList() {
+		return clientList;
+	}
+
+	public void setClientList(List<Client> clientList) {
+		this.clientList = clientList;
+	}
+
+	public Client getSelectedClient() {
+		return selectedClient;
+	}
+
+	public void setSelectedClient(Client selectedClient) {
+		this.selectedClient = selectedClient;
+	}
+
+	public Client getEditedClient() {
+		return editedClient;
+	}
+
+	public void setEditedClient(Client editedClient) {
+		this.editedClient = editedClient;
+	}
+
+	public Client getNewClient() {
+		return newClient;
+	}
+
+	public void setNewClient(Client newClient) {
+		this.newClient = newClient;
+	}
+
+	public Contact getNewContact() {
+		return newContact;
+	}
+
+	public void setNewContact(Contact newContact) {
+		this.newContact = newContact;
+	}
+
+	public Contact getSelectedContact() {
+		return selectedContact;
+	}
+
+	public void setSelectedContact(Contact selectedContact) {
+		this.selectedContact = selectedContact;
 	}
 }

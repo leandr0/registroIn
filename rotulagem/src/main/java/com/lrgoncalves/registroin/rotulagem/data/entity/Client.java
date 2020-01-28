@@ -1,6 +1,7 @@
 package com.lrgoncalves.registroin.rotulagem.data.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Client implements Serializable {
 
@@ -10,11 +11,13 @@ public class Client implements Serializable {
 	private static final long serialVersionUID = 7046963146664746014L;
 
 	private String nome;
-	
-	private String produto;
-	
-	private String email;
 
+	private String id;
+	
+	private String identificationNumber;
+	
+	private List<Contact> contactList;
+	
 	public String getNome() {
 		return nome;
 	}
@@ -23,20 +26,28 @@ public class Client implements Serializable {
 		this.nome = nome;
 	}
 
-	public String getProduto() {
-		return produto;
+	public String getId() {
+		return id;
 	}
 
-	public void setProduto(String produto) {
-		this.produto = produto;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getIdentificationNumber() {
+		return identificationNumber;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setIdentificationNumber(String identificatioNumber) {
+		this.identificationNumber = identificatioNumber;
+	}
+
+	public List<Contact> getContactList() {
+		return contactList;
+	}
+
+	public void setContactList(List<Contact> contactList) {
+		this.contactList = contactList;
 	}
 	
 }
