@@ -17,11 +17,9 @@ public class RotuloMailMessage implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6718948089291607113L;
+	private static final long serialVersionUID = 4113497218499778501L;
 
 	private String[] recipientList;
-	
-	private String emailSenderAddress = "vanessa@registroin.com.br";
 	
 	private String subject;
 
@@ -56,14 +54,6 @@ public class RotuloMailMessage implements Serializable {
 
 	public void setRecipientList(String... recipientList) {
 		this.recipientList = recipientList;
-	}
-
-	public String getEmailSenderAddress() {
-		return emailSenderAddress;
-	}
-
-	public void setEmailSenderAddress(String emailSenderAddress) {
-		this.emailSenderAddress = emailSenderAddress;
 	}
 
 	public String getSubject() {
