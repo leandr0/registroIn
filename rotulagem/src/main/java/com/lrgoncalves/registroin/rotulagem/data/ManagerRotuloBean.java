@@ -68,9 +68,9 @@ public class ManagerRotuloBean implements Serializable {
 			FindIterable<Document> iterable = null;
 			
 			if(StringUtils.isBlank(query)) {
-				iterable = collection.find();
+				iterable = collection.find(Filters.eq("active",true));
 			}else {
-				iterable = collection.find(Filters.regex("produto", query, "i"));
+				iterable = collection.find(Filters.and(Filters.regex("produto", query, "i"),Filters.eq("active",true)));
 			}
 
 			MongoCursor<Document> cursor = iterable.cursor();
@@ -98,7 +98,7 @@ public class ManagerRotuloBean implements Serializable {
 
 			MongoCollection<Document> collection = database.getCollection("rotulos");
 
-			FindIterable<Document> iterable = collection.find(Filters.eq("_id", id));
+			FindIterable<Document> iterable = collection.find(Filters.and(Filters.eq("_id", id),Filters.eq("active",true)));
 
 			MongoCursor<Document> cursor = iterable.cursor();
 
@@ -131,6 +131,22 @@ public class ManagerRotuloBean implements Serializable {
 		}
 	}
 
+	public void delete(final String id) throws PersistRotuloException {
+
+		try {
+
+			MongoDatabase database = mongoClient.getDatabase("registroin");
+
+			MongoCollection<Document> collection = database.getCollection("rotulos");
+
+			collection.updateOne(Filters.eq("_id", id), Updates.set("active", false));
+
+		} catch (Throwable t) {
+			LOGGER.error(t.getMessage());
+			throw new PersistRotuloException(t);
+		}
+	}
+	
 	public void persistRotulo(Rotulo model) throws PersistRotuloException {
 
 		try {
@@ -144,6 +160,7 @@ public class ManagerRotuloBean implements Serializable {
 			rotulo.append("_id", model.getId());
 			rotulo.append("data", model.getData());
 			rotulo.append("produto", model.getProduto());
+			rotulo.append("active", true);
 
 			try {
 				rotulo.append("informacao_nutricional", buildInformacaoNutricional(model.getInformacaoNutricional()));

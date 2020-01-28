@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
 import com.lrgoncalves.registroin.rotulagem.data.entity.StatusType;
+import com.lrgoncalves.registroin.rotulagem.data.exception.PersistRotuloException;
 
 /**
  * @author digitallam
@@ -213,6 +214,18 @@ public class UIReportBean extends UIAbstractBean {
 		return "home";
 	}
 
+	public String deleteRotulo() {
+		
+		
+		try {
+			rotuloDataAccess.delete(rotulo.getId());		
+		} catch (PersistRotuloException e) {
+			LOGGER.severe(e.getMessage());
+		}
+		
+		return "home";
+	}
+	
 	public String getFromPage() {
 		return fromPage;
 	}

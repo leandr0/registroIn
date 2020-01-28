@@ -718,6 +718,12 @@ striping:
 	background-image: url("#{resource['images/show-property.png']}") !important;
 	background-size: 15px 15px;
 }
+.btnDelete {
+	border-radius: 0px;
+	background-image: url("#{resource['images/delete-bin.png']}") !important;
+	background-size: 15px 15px;
+}
+
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }  

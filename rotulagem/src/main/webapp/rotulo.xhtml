@@ -47,6 +47,14 @@
 				oncomplete="hideLoading('#loading-overlay')" class="element-change">
 				<p:graphicImage name="images/business-report.png" width="17" />
 			</p:commandLink>
+			<p:commandLink action="#{rotulo_ui.deleteRotulo}" id="delete-report"
+				onclick="changeElement('#delete-report');showDiv('#loading-overlay');"
+				oncomplete="hideLoading('#loading-overlay')" class="element-change">
+								<p:confirm header="Confirmação"
+								message="Deseja realmente excluir o rótulo ?"
+								icon="pi pi-exclamation-triangle" />
+						<p:graphicImage name="images/delete-bin.png" width="17" />
+			</p:commandLink>	
 			<a id="save" class="element-change disabled-change"> <img
 				src="resources/images/save.png" alt="Picture Description"
 				style="border: 0; height: 17px;" />

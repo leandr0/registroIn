@@ -46,8 +46,9 @@
 		      <img src="resources/images/pdf.png" alt="Picture Description" style="border:0;height:17px;"/>
 		    </a>
 		</div>
-		
-		
+		<p:messages id="messages" showDetail="true" closable="true">
+        	<p:autoUpdate />
+    	</p:messages>
 		<div id="page">
 			<h:panelGrid columns="3" cellpadding="5">
 				<p:outputLabel for="search_rotulo_ita"
@@ -115,7 +116,7 @@
 							<p:commandButton 
 								update="data_table_rotulos"
 								action="#{initial_ui.updateStatus}"
-								title="Enviar"
+								title="Análise"
 								value="Nova análise"
 								icon="btnReviewing" 
 								onclick="showDiv('#loading-overlay');"
@@ -123,7 +124,20 @@
 								style="background:none;">
 								 <f:setPropertyActionListener value="#{rotulo}" target="#{initial_ui.selectedRotulo}" />
 							</p:commandButton>	
-
+							<p:commandButton 
+								update="data_table_rotulos"
+								action="#{initial_ui.deleteRotulo}"
+								title="Deletar"
+								value="Deletar rótulo"
+								icon="btnDelete" 
+								onclick="showDiv('#loading-overlay');"
+								oncomplete="hideLoading('#loading-overlay')"
+								style="background:none;">
+								<p:confirm header="Confirmação"
+								message="Deseja realmente excluir o rótulo ?"
+								icon="pi pi-exclamation-triangle" />
+								 <f:setPropertyActionListener value="#{rotulo}" target="#{initial_ui.selectedRotulo}" />
+							</p:commandButton>	
 							
 						</p:panelGrid>
 					</p:rowExpansion>
@@ -131,6 +145,15 @@
 				</p:dataTable>
 			</p:panel>
 		</div>
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+			<h:panelGrid columns="2" cellpadding="0"
+				style="width:60%;text-align:center;padding-left:22%;">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="checked-icon" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="cancel-icon" />
+			</h:panelGrid>
+		</p:confirmDialog>
 	</h:form>
 	<div id="loading-overlay">
 		<div class="loading-icon"></div>

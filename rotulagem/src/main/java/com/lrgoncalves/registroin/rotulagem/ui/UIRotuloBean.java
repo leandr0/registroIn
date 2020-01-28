@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.event.SelectEvent;
 
@@ -25,6 +26,7 @@ import com.lrgoncalves.registroin.rotulagem.data.entity.Client;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Contact;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
 import com.lrgoncalves.registroin.rotulagem.data.entity.SimpleObject;
+import com.lrgoncalves.registroin.rotulagem.data.exception.PersistRotuloException;
 
 /**
  * @author digitallam
@@ -962,6 +964,26 @@ public class UIRotuloBean extends UIAbstractBean {
 
 	public void salvarCliente() {
 		try {
+			
+			if(newClient.getContactList() == null || newClient.getContactList().isEmpty()) {
+				
+				showMessageWarn("É necessário ter ao menos um contato associado ao Cliente.");
+				return;
+				
+			}
+			
+			else {
+				
+				for (Contact ctt : newClient.getContactList()) {
+				
+					if(StringUtils.isBlank(ctt.getEmail())) {
+						showMessageWarn("É necessário que os contatos tenham e-mails válidos.");
+						return;
+					}
+				}
+			}
+			
+			
 			clientDataAccess.persistClient(newClient);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
@@ -972,6 +994,19 @@ public class UIRotuloBean extends UIAbstractBean {
 	public String editarCliente() {
 		newClient = selectedClient;
 		return null;
+	}
+	
+	
+	public String deleteRotulo() {
+		
+		
+		try {
+			rotuloDataAccess.delete(rotulo.getId());
+		} catch (PersistRotuloException e) {
+			LOGGER.error(e.getMessage());
+		}
+		
+		return "home";
 	}
 	
 	public SimpleObject getSelectedItemOutros() {

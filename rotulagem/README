@@ -5,3 +5,13 @@ https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-refere
 git fetch --all
 git reset --hard origin/master
 git pull origin master
+
+
+systemLog:
+   destination: file
+   path: "/opt/mongodb//mongod.log"
+   logAppend: true
+storage:
+   journal:
+      enabled: true
+      dbPath : "/opt/mongodb/data/db"

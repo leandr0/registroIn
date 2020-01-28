@@ -76,22 +76,22 @@ public abstract class UIAbstractBean implements Serializable{
 	
 	protected void showMessageWarn(String message){
 		FacesContext.getCurrentInstance().addMessage(null, 
-				new FacesMessage(FacesMessage.SEVERITY_WARN,"Warn",message));
+				new FacesMessage(FacesMessage.SEVERITY_WARN,"",message));
 	}
 
 	protected void showMessageInfo(String message){
 		FacesContext.getCurrentInstance().addMessage(null, 
-				new FacesMessage(FacesMessage.SEVERITY_INFO,"Info",message));
+				new FacesMessage(FacesMessage.SEVERITY_INFO,"",message));
 	}
 
 	protected void showMessageError(String message){
 		FacesContext.getCurrentInstance().addMessage(null, 
-				new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error",message));
+				new FacesMessage(FacesMessage.SEVERITY_ERROR,"",message));
 	}
 	
 	protected void showMessageFatal(String message){
 		FacesContext.getCurrentInstance().addMessage(null, 
-				new FacesMessage(FacesMessage.SEVERITY_FATAL,"Fatal",message));
+				new FacesMessage(FacesMessage.SEVERITY_FATAL,"",message));
 	}
 
 	public void setNomeUsuario(String nomeUsuario) {

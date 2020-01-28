@@ -18,6 +18,7 @@ import org.primefaces.event.UnselectEvent;
 
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
 import com.lrgoncalves.registroin.rotulagem.data.entity.StatusType;
+import com.lrgoncalves.registroin.rotulagem.data.exception.PersistRotuloException;
 
 /**
  * @author digitallam
@@ -94,6 +95,12 @@ public class UIInitialBean extends UIAbstractBean {
 
 		try {
 
+			if(selectedRotulo.getClient().getContactList() == null || selectedRotulo.getClient().getContactList().isEmpty()) {
+				
+				showMessageError("Não foi possível enviar o email. O Cliente não tem lista de contatos.");
+				return;
+			}
+				
 			switch (selectedRotulo.getStatus()) {
 			case EM_ANALISE:
 				selectedRotulo.setStatus(StatusType.ENVIADO);
@@ -163,6 +170,28 @@ public class UIInitialBean extends UIAbstractBean {
 		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
+	
+	public String deleteRotulo() {
+		
+		
+		try {
+			rotuloDataAccess.delete(selectedRotulo.getId());
+			
+			for (Rotulo rtl : rotulos) {
+				
+				if(rtl.getId().equalsIgnoreCase(selectedRotulo.getId())) {
+					rotulos.remove(rtl);
+					break;
+				}
+			}
+			
+		} catch (PersistRotuloException e) {
+			LOGGER.severe(e.getMessage());
+		}
+		
+		return null;
+	}
+	
 	public String getSearchRotuloQuery() {
 		return searchRotuloQuery;
 	}
