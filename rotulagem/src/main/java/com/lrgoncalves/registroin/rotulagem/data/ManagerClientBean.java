@@ -18,11 +18,9 @@ import com.lrgoncalves.registroin.rotulagem.data.entity.Client;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Contact;
 import com.lrgoncalves.registroin.rotulagem.data.exception.PersistClientException;
 import com.lrgoncalves.registroin.rotulagem.data.exception.SearchRotuloException;
-import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 
@@ -35,12 +33,13 @@ public class ManagerClientBean implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8830284544781815664L;
-
-	@Inject
-	transient MongoClient mongoClient;
+	private static final long serialVersionUID = -3655393451902135174L;
 
 	private static final Logger LOGGER = Logger.getLogger(ManagerClientBean.class.getName());
+
+	@Inject 
+	@ClientCollection
+	private MongoCollection<Document> collection;
 
 	public List<Client> searchByName(String query) throws SearchRotuloException {
 
@@ -48,10 +47,6 @@ public class ManagerClientBean implements Serializable {
 
 		try {
 			
-			MongoDatabase database = mongoClient.getDatabase("registroin");
-
-			MongoCollection<Document> collection = database.getCollection("clients");
-
 			FindIterable<Document> iterable = collection.find(Filters.regex("name", query, "i"));
 
 			MongoCursor<Document> cursor = iterable.cursor();
@@ -75,10 +70,6 @@ public class ManagerClientBean implements Serializable {
 
 		try {
 
-			MongoDatabase database = mongoClient.getDatabase("registroin");
-
-			MongoCollection<Document> collection = database.getCollection("clients");
-
 			FindIterable<Document> iterable = collection.find(Filters.eq("_id", new ObjectId(id)));
 
 			MongoCursor<Document> cursor = iterable.cursor();
@@ -101,10 +92,6 @@ public class ManagerClientBean implements Serializable {
 		String id = null;
 
 		try {
-
-			MongoDatabase database = mongoClient.getDatabase("registroin");
-
-			MongoCollection<Document> collection = database.getCollection("clients");
 
 			Document client = builClient(model);
 
@@ -204,12 +191,5 @@ public class ManagerClientBean implements Serializable {
 		document.append("contact_list", buildContactList(model.getContactList()));
 
 		return document;
-	}
-	
-	/**
-	 * Just use it on Tests
-	 */
-	public void setMongoClient(MongoClient mongoClient) {
-		this.mongoClient = mongoClient;
 	}
 }
