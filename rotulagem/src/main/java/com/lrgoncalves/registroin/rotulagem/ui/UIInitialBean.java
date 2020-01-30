@@ -63,8 +63,6 @@ public class UIInitialBean extends UIAbstractBean {
 
 			rotulos = rotuloDataAccess.searchByDescription(searchRotuloQuery);
 
-			Thread.sleep(1000);
-
 		} catch (Throwable e) {
 			LOGGER.error("searchRotulo", e.getCause());
 		}

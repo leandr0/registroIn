@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -14,11 +15,11 @@ import java.util.UUID;
  *
  */
 public class Rotulo implements Serializable {
-	
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 775853882980101485L;
+	private static final long serialVersionUID = -8719771305243509677L;
 
 	private String id;
 	
@@ -77,7 +78,9 @@ public class Rotulo implements Serializable {
 	private Azeite azeite;
 	
 	private String produto;
-
+	
+	private Set<Rotulo> history;
+	
 	public Rotulo() {
 		
 		id = String.format("%040d", new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16));
@@ -346,4 +349,32 @@ public class Rotulo implements Serializable {
 	public void setProduto(String produto) {
 		this.produto = produto;
 	}
+
+	public Set<Rotulo> getHistory() {
+		return history;
+	}
+
+	public void setHistory(Set<Rotulo> history) {
+		this.history = history;
+	}
+	
+	/**
+	@Override
+	public int hashCode() {
+		return new BigInteger(id).hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		
+		if(!obj.getClass().isInstance(this))
+			throw new IllegalArgumentException("The object have to be an instance of Rotulo");
+			
+		if(((Rotulo)obj).hashCode() == this.hashCode() ){
+			return true;
+		}
+		
+		return false;
+	}
+	**/
 }

@@ -5,20 +5,13 @@ package com.lrgoncalves.registroin.rotulagem;
 
 import static java.util.logging.Level.INFO;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,19 +26,14 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.media.MediaType;
-import com.lrgoncalves.registroin.rotulagem.data.ManagerClientBean;
 import com.lrgoncalves.registroin.rotulagem.data.ManagerRotuloBean;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Client;
 import com.lrgoncalves.registroin.rotulagem.data.entity.ConservacaoProduto;
-import com.lrgoncalves.registroin.rotulagem.data.entity.Contact;
 import com.lrgoncalves.registroin.rotulagem.data.entity.InformacaoNutricional;
 import com.lrgoncalves.registroin.rotulagem.data.entity.PesoLiquido;
 import com.lrgoncalves.registroin.rotulagem.data.entity.QuantidadeNutricional;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
 import com.lrgoncalves.registroin.rotulagem.data.entity.SimpleObject;
-import com.lrgoncalves.registroin.rotulagem.data.entity.StatusType;
-import com.lrgoncalves.registroin.rotulagem.mail.ManagerSendMailBean;
-import com.lrgoncalves.registroin.rotulagem.mail.RotuloMailMessage;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -69,38 +57,35 @@ public class RotulagemApp {
 	 */
 	public static void main(String[] args) {
 
-		StatusType type = StatusType.valueOf(StatusType.EM_ANALISE.name());
-
-		if (StringUtils.equalsIgnoreCase(StatusType.EM_ANALISE.getValue(), "Em Análise")) {
-			LOGGER.info("OK");
+		HashSet<Rotulo> setList = new HashSet<Rotulo>();
+		
+		Rotulo rtl = new Rotulo();
+		rtl.setId("0123");
+		
+		Rotulo rtll = new Rotulo();
+		rtll.setId("0123");
+		
+		setList.add(rtl);
+		setList.add(rtll);
+		setList.add(new Rotulo());
+		setList.add(new Rotulo());
+		setList.add(new Rotulo());
+		setList.add(new Rotulo());
+		
+		for (Rotulo rotulo : setList) {
+			System.out.println(rotulo.getId());
+			System.out.println(rotulo.hashCode());
 		}
-
-		ManagerClientBean clientBean = new ManagerClientBean();
-
-		Client client = new Client();
-
-		client.setIdentificationNumber("02.775.178/0001-30");
-		client.setNome("Casa do Pães");
-		// model.setId("5e1f28d7a1616a71b0637a41");
-
-		List<Contact> contactList = new LinkedList<Contact>();
-
-		contactList.add(new Contact("Barnabé", "barnabe@cadadospaes.com.br"));
-		contactList.add(new Contact("Jurema", "jurema@cadadospaes.com.br"));
-		contactList.add(new Contact("Astolfo", "astolfo@cadadospaes.com.br"));
-		contactList.add(new Contact("Astrogilda", "astrogilda@cadadospaes.com.br"));
-		contactList.add(new Contact("Etevaldo", "etevaldo@cadadospaes.com.br"));
-
-		client.setContactList(contactList);
-
+		
+		
 		// persistRotulo(calculoNutricional());
 		// queryRotulo(); https://anotepad.com/notes/77iamee
 
 		try {
 
-			mongoDbClient = new MongoClient("localhost", 27017);
-			clientBean.setMongoClient(mongoDbClient);
-			clientBean.persistClient(client);
+			//mongoDbClient = new MongoClient("localhost", 27017);
+			//clientBean.setMongoClient(mongoDbClient);
+			//clientBean.persistClient(client);
 
 			// ManagerSendMailBean msm = new ManagerSendMailBean();
 

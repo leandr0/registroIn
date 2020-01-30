@@ -151,7 +151,7 @@ public class UIRotuloBean extends UIAbstractBean {
 
 		calculoNutricional = new CalculoNutricional();
 
-		String dataPattern = "dd/MM/yyyy";
+		String dataPattern = "dd/MM/yyyy HH:mm:ss";
 
 		DateTimeFormatter dTF = DateTimeFormatter.ofPattern(dataPattern);
 
@@ -620,9 +620,10 @@ public class UIRotuloBean extends UIAbstractBean {
 				index++;
 			}
 
-		} /*
-			 * else { rotulo.getOutros().setIndexReport(0); }
-			 */
+		} else { 
+			rotulo.getOutros().clear(); 
+		}
+			 
 
 		setSessionAttribute("rotulo", rotulo);
 

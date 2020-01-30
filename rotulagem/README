@@ -14,4 +14,7 @@ systemLog:
 storage:
    journal:
       enabled: true
-      dbPath : "/opt/mongodb/data/db"
+   dbPath : "/opt/mongodb/data/db"
+      
+      
+./standalone.sh -bmanagement 0.0.0.0 -Djboss.bind.address=0.0.0.0  -Djboss.http.port=80 --debug *:8787   
