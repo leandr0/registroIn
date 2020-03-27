@@ -10,12 +10,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.concurrent.Future;
 
-import javax.ejb.Asynchronous;
 import javax.inject.Inject;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
@@ -26,8 +31,10 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.media.MediaType;
+import com.lrgoncalves.registroin.rotulagem.data.ManagerRotuloBean;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Contact;
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
+import com.lrgoncalves.registroin.rotulagem.data.exception.PersistRotuloException;
 import com.lrgoncalves.registroin.rotulagem.mail.ManagerSendMailBean;
 import com.lrgoncalves.registroin.rotulagem.mail.RotuloMailMessage;
 import com.lrgoncalves.registroin.rotulagem.mail.exception.SendRotuloMailExcpetion;
@@ -41,20 +48,25 @@ public class ManagerReportBean implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7071277587225030230L;
+	private static final long serialVersionUID = -2356645183150938244L;
 
 	private static final String ROTULO_PATH = "/tmp/registroIn/rotulos/"; 
 	
 	@Inject
 	protected ManagerSendMailBean sendMail;
 	
+	@Inject
+	private ManagerRotuloBean rotuloDataAccess;
 	
-	public String saveReport(final String rotulo) throws IOException {
+	
+	public String saveReport(final String rotulo) throws IOException, InstanceNotFoundException, AttributeNotFoundException, MalformedObjectNameException, ReflectionException, MBeanException {
+		
+		Integer port = (Integer) ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=standard-sockets,socket-binding=http"), "port");
 		
 		String outputFile = ROTULO_PATH+rotulo+".pdf";
 		OutputStream os = new FileOutputStream(outputFile);
 
-		manipulatePdf(downloadHTML(rotulo).replace("/rotulagem/", "http://localhost/rotulagem/"), outputFile,
+		manipulatePdf(downloadHTML(rotulo).replace("/rotulagem/", "http://localhost:"+port+"/rotulagem/"), outputFile,
 				PageSize.A4, PageSize.A4.getWidth());
 
 		os.close();
@@ -64,9 +76,11 @@ public class ManagerReportBean implements Serializable {
 	}
 	
 	
-	private String downloadHTML(final String rotulo) throws IOException {
+	private String downloadHTML(final String rotulo) throws IOException, InstanceNotFoundException, AttributeNotFoundException, MalformedObjectNameException, ReflectionException, MBeanException {
 		
-		String url = "http://localhost/rotulagem/report-partner.jsf?rotulo=" + rotulo;
+		Integer port = (Integer) ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("jboss.as:socket-binding-group=standard-sockets,socket-binding=http"), "port");
+		
+		String url = "http://localhost:"+port+"/rotulagem/report-partner.jsf?rotulo=" + rotulo;
 		
 		URL u = new URL(url);
 
@@ -112,8 +126,7 @@ public class ManagerReportBean implements Serializable {
 		
 	}
 	
-	@Asynchronous
-	public Future<Void> sendReportByEmail(final Rotulo rotulo) throws IOException, SendRotuloMailExcpetion{
+	public void sendReportByEmail(final Rotulo rotulo) throws IOException, SendRotuloMailExcpetion, PersistRotuloException, InstanceNotFoundException, AttributeNotFoundException, MalformedObjectNameException, ReflectionException, MBeanException{
 		
 
 		RotuloMailMessage message = new RotuloMailMessage();
@@ -141,7 +154,8 @@ public class ManagerReportBean implements Serializable {
 		message.setClientName(clientName);
 		sendMail.sendRotuloMail(message);
 		
-		return null;
+		rotuloDataAccess.updateStatus(rotulo.getId(), rotulo.getStatus());
+		
 	}
 
 }

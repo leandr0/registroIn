@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.LogFactory;
 import org.bson.Document;
 
 import com.itextpdf.html2pdf.ConverterProperties;
@@ -57,24 +58,10 @@ public class RotulagemApp {
 	 */
 	public static void main(String[] args) {
 
-		HashSet<Rotulo> setList = new HashSet<Rotulo>();
 		
-		Rotulo rtl = new Rotulo();
-		rtl.setId("0123");
 		
-		Rotulo rtll = new Rotulo();
-		rtll.setId("0123");
-		
-		setList.add(rtl);
-		setList.add(rtll);
-		setList.add(new Rotulo());
-		setList.add(new Rotulo());
-		setList.add(new Rotulo());
-		setList.add(new Rotulo());
-		
-		for (Rotulo rotulo : setList) {
-			System.out.println(rotulo.getId());
-			System.out.println(rotulo.hashCode());
+		for (String string : LogFactory.getFactory().getAttributeNames()) {
+			LOGGER.info(string);
 		}
 		
 		

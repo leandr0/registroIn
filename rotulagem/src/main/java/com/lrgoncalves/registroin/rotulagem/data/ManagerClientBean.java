@@ -66,12 +66,16 @@ public class ManagerClientBean implements Serializable {
 
 	public Client find(String id) throws SearchRotuloException {
 
+		if(StringUtils.isBlank(id))
+			throw new IllegalArgumentException("id parameter is null.");
+		
+		
 		Client model = null;
 
 		try {
 
 			FindIterable<Document> iterable = collection.find(Filters.eq("_id", new ObjectId(id)));
-
+			
 			MongoCursor<Document> cursor = iterable.cursor();
 
 			while (cursor.hasNext()) {
@@ -141,9 +145,10 @@ public class ManagerClientBean implements Serializable {
 
 	private Contact buildContact(Document document) {
 
-		if (document == null)
+		if (document == null) {
+			LOGGER.warn("Document is null.");
 			throw new IllegalArgumentException("Invalid object!");
-
+		}
 		Contact model = new Contact();
 		model.setEmail(document.getString("email"));
 		model.setName(document.getString("name"));

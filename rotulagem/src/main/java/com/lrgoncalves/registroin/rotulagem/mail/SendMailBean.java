@@ -4,7 +4,6 @@
 package com.lrgoncalves.registroin.rotulagem.mail;
 
 import java.io.Serializable;
-import java.util.concurrent.Future;
 
 import com.lrgoncalves.registroin.rotulagem.mail.exception.SendRotuloMailExcpetion;
 
@@ -100,6 +99,6 @@ public interface SendMailBean extends Serializable {
 			"</html>\n" + 
 			"";
 	
-	public Future<Void>  sendRotuloMail(RotuloMailMessage message) throws SendRotuloMailExcpetion;
+	public void sendRotuloMail(RotuloMailMessage message) throws SendRotuloMailExcpetion;
 	
 }

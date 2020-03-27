@@ -8,6 +8,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.LogFactory;
+
 import com.lrgoncalves.registroin.rotulagem.ManagerReportBean;
 import com.lrgoncalves.registroin.rotulagem.data.ManagerClientBean;
 import com.lrgoncalves.registroin.rotulagem.data.ManagerRotuloBean;
@@ -35,6 +37,10 @@ public abstract class UIAbstractBean implements Serializable{
 	protected String chaveServico;
 
 	public UIAbstractBean() {
+		String PATTERN = "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%L - %msg%n";
+		
+		LogFactory.getFactory().setAttribute( "logging.pattern.console", PATTERN);
+		
 		createNewSession();
 	}
 

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.resource.spi.IllegalStateException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -46,7 +47,6 @@ import com.mongodb.client.model.Updates;
  */
 public class ManagerRotuloBean implements Serializable {
 
-
 	/**
 	 * 
 	 */
@@ -56,7 +56,7 @@ public class ManagerRotuloBean implements Serializable {
 	private ManagerClientBean clientDataAccess;
 
 	private static final Logger LOGGER = Logger.getLogger(ManagerRotuloBean.class.getName());
-	
+
 	@Inject 
 	@RotuloCollection
 	private MongoCollection<Document> collection;
@@ -81,7 +81,10 @@ public class ManagerRotuloBean implements Serializable {
 
 			while (cursor.hasNext()) {
 				Document rotulo = cursor.next();
-				rotulos.add(builRotulo(rotulo));
+				Rotulo model = builRotulo(rotulo);
+				model.setHistory(builHistory(rotulo));
+				rotulos.add(model);
+				
 			}
 
 		} catch (Throwable t) {
@@ -121,7 +124,7 @@ public class ManagerRotuloBean implements Serializable {
 
 		try {
 			
-			collection.updateOne(Filters.eq("_id", id), Updates.set("status", status.getValue()));
+			collection.updateOne(Filters.and(Filters.eq("_id", id), Filters.ne("historical_data",true)), Updates.set("status", status.getValue()));
 
 		} catch (Throwable t) {
 			LOGGER.error(t.getMessage());
@@ -141,12 +144,21 @@ public class ManagerRotuloBean implements Serializable {
 		}
 	}
 
-	public void persistRotulo(Rotulo model) throws PersistRotuloException {
+	public void persistRotulo(Rotulo model) throws PersistRotuloException, IllegalStateException {
 
+		if(model == null)
+			throw new IllegalArgumentException("Null object");
+
+		if(model.isHistoricalData()) {
+			LOGGER.warn("Invalid status for the Rotulo ID : "+model.getId());
+			throw new IllegalStateException("Este rótulo é um dado histórico e não pode ser alterado.");
+		}
+		
 		try {
-
+			
 			Document rotulo = buildRotulo(model, true);
-
+			rotulo.append("historical_date",false);
+			
 			rotulo.append("history", buildHistory(model));
 
 			collection.replaceOne(Filters.eq("_id", model.getId()), rotulo, new ReplaceOptions().upsert(true));
@@ -184,9 +196,7 @@ public class ManagerRotuloBean implements Serializable {
 		
 		try {
 			rotulo.append("informacao_nutricional", buildInformacaoNutricional(model.getInformacaoNutricional()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
 
 		if (addClient) {
 			
@@ -199,136 +209,111 @@ public class ManagerRotuloBean implements Serializable {
 
 				String clientId = clientDataAccess.persistClient(model.getClient());
 				rotulo.append("client_id", clientId);
-			} catch (IllegalArgumentException e) {
-				LOGGER.info(e.getMessage());
-			}
-
+			} catch (IllegalArgumentException e) {}
+			
+			rotulo.append("historical_data", !addClient);
+		}else {
+			
+			rotulo.append("client_id", model.getClient().getId());
+			rotulo.append("historical_data", !addClient);
+			
 		}
 		try {
 			rotulo.append("denominacao_produto", buildSimpleObject(model.getDenominacaoProduto()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
 
 		try {
 			rotulo.append("conservacao_produto", buildConservacaoProduto(model.getConservacaoProduto()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
 
 		try {
 			rotulo.append("distribuidor", buildSimpleObject(model.getDistribuidor()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
 
 		try {
 			rotulo.append("tartrazina", buildSimpleObject(model.getTartrazina()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
 
 		try {
 			rotulo.append("aromatizante", buildSimpleObject(model.getAromatizante()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
 
 		try {
 			rotulo.append("derivados_lacteos", buildSimpleObject(model.getDerivadosLacteos()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("importador", buildSimpleObject(model.getImportador()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("aspartame_fenilalanina", buildSimpleObject(model.getAspartameFenilalanina()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("peso_liquido", buildPesoLiquido(model.getPesoLiquido()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("alergicos", buildSimpleObject(model.getAlergicos()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("data_fabricacao", buildSimpleObject(model.getDataFabricacao()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("sac", buildSimpleObject(model.getSac()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("gluten", buildSimpleObject(model.getGluten()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("gluten_alergenos", buildSimpleObject(model.getGlutenAlergenos()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("prazo_validade", buildSimpleObject(model.getPrazoValidade()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("transgenico", buildSimpleObject(model.getTransgenico()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("industria_origem", buildSimpleObject(model.getIndustriaOrigem()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("outros", buildOutros(model.getOutros()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("lote", buildSimpleObject(model.getLote()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("registro_mapa", buildSimpleObject(model.getRegistroMAPA()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("ingredientes", buildSimpleObject(model.getIngredientes()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("produtor", buildSimpleObject(model.getProdutor()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("azeite", buildAzeite(model.getAzeite()));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.append("status", model.getStatus().getValue());
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 
 		rotulo.append("_id", model.getId());		
 		rotulo.append("data", model.getData());
@@ -367,15 +352,13 @@ public class ManagerRotuloBean implements Serializable {
 
 		try {
 			document.append("denominacao", buildSimpleObject(model.getDenominacao()));
-		} catch (Throwable t) {
-			LOGGER.info(t.getMessage());
-		}
+		} catch (Throwable t) {}
+		
 
 		try {
 			document.append("classificacao", buildClassificacaoAzeite(model.getClassificacao()));
-		} catch (Throwable t) {
-			LOGGER.info(t.getMessage());
-		}
+		} catch (Throwable t) {}
+		
 
 		return document;
 	}
@@ -510,14 +493,14 @@ public class ManagerRotuloBean implements Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Rotulo> builHistory(Document document) {
+	public List<Rotulo> builHistory(Document document) {
 
 		ArrayList<Document> documentHistorySet = (ArrayList<Document>) document.get("history");
 
 		if (documentHistorySet == null)
 			return null;
 
-		Set<Rotulo> resultSet = new HashSet<Rotulo>();
+		List<Rotulo> resultSet = new LinkedList<Rotulo>();
 
 		for (Document doc : documentHistorySet) {
 			resultSet.add(builRotulo(doc));
@@ -552,136 +535,110 @@ public class ManagerRotuloBean implements Serializable {
 		try {
 			rotulo.setInformacaoNutricional(
 					buildInformacaoNutricional((Document) document.get("informacao_nutricional")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setClient(clientDataAccess.find((String) document.get("client_id")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		} catch (SearchRotuloException e) {
+		} catch (IllegalArgumentException e) {}
+		  catch (SearchRotuloException e) {
 			LOGGER.error(e.getMessage());
 		}
 		try {
 			rotulo.setDenominacaoProduto(buildSimpleObject((Document) document.get("denominacao_produto")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setConservacaoProduto(buildConservacaoProduto((Document) document.get("conservacao_produto")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setDistribuidor(buildSimpleObject((Document) document.get("distribuidor")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setTartrazina(buildSimpleObject((Document) document.get("tartrazina")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setAromatizante(buildSimpleObject((Document) document.get("aromatizante")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setDerivadosLacteos(buildSimpleObject((Document) document.get("derivados_lacteos")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setImportador(buildSimpleObject((Document) document.get("importador")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setAspartameFenilalanina(buildSimpleObject((Document) document.get("aspartame_fenilalanina")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setPesoLiquido(buildPesoLiquido((Document) document.get("peso_liquido")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setAlergicos(buildSimpleObject((Document) document.get("alergicos")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setDataFabricacao(buildSimpleObject((Document) document.get("data_fabricacao")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setSac(buildSimpleObject((Document) document.get("sac")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setGluten(buildSimpleObject((Document) document.get("gluten")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setGlutenAlergenos(buildSimpleObject((Document) document.get("gluten_alergenos")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setPrazoValidade(buildSimpleObject((Document) document.get("prazo_validade")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setTransgenico(buildSimpleObject((Document) document.get("transgenico")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setIndustriaOrigem(buildSimpleObject((Document) document.get("industria_origem")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setOutros(buildOutros((Document) document.get("outros")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e){}
+		
 		try {
 			rotulo.setLote(buildSimpleObject((Document) document.get("lote")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e){}
+		
 		try {
 			rotulo.setRegistroMAPA(buildSimpleObject((Document) document.get("registro_mapa")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setIngredientes(buildSimpleObject((Document) document.get("ingredientes")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setProdutor(buildSimpleObject((Document) document.get("produtor")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
 			rotulo.setAzeite(buildAzeite((Document) document.get("azeite")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 		try {
-			rotulo.setStatus(StatusType.valueOf(document.getString("status")));
-		} catch (Throwable e) {
-			LOGGER.info(e.getMessage());
-		}
+			rotulo.setHistoricalData(document.getBoolean("historical_data"));
+		} catch (IllegalArgumentException e) {}
+		
 
 		return rotulo;
 	}
@@ -811,15 +768,13 @@ public class ManagerRotuloBean implements Serializable {
 
 		try {
 			model.setClassificacao(buildClassificacaoAzeite((Document) document.get("classificacao")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 
 		try {
 			model.setDenominacao(buildSimpleObject((Document) document.get("denominacao")));
-		} catch (IllegalArgumentException e) {
-			LOGGER.info(e.getMessage());
-		}
+		} catch (IllegalArgumentException e) {}
+		
 
 		return model;
 	}

@@ -5,12 +5,10 @@ package com.lrgoncalves.registroin.rotulagem.mail;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Future;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -36,7 +34,7 @@ public class ManagerSendMailBean implements SendMailBean {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5000394900565933544L;
+	private static final long serialVersionUID = 4794012516737524175L;
 
 
 	private static final Log  LOGGER = LogFactory.getLog(ManagerSendMailBean.class);
@@ -68,9 +66,8 @@ public class ManagerSendMailBean implements SendMailBean {
 		
 	}
 	
-	@Asynchronous
 	@Override
-	public Future<Void> sendRotuloMail(RotuloMailMessage message) throws SendRotuloMailExcpetion {
+	public void sendRotuloMail(RotuloMailMessage message) throws SendRotuloMailExcpetion {
 		
 
 		try {
@@ -93,8 +90,6 @@ public class ManagerSendMailBean implements SendMailBean {
 			mimeMessage.saveChanges();
 			
 			Transport.send(mimeMessage, mimeMessage.getAllRecipients());
-			
-			return null;
 			
 		} catch (Exception ex) {
 			LOGGER.error("sendRotuloMail", ex.getCause());

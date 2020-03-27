@@ -15,6 +15,7 @@ import javax.inject.Named;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 
 import com.lrgoncalves.registroin.rotulagem.data.entity.Rotulo;
@@ -32,7 +33,7 @@ public class UIInitialBean extends UIAbstractBean {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 868258502558840268L;
+	private static final long serialVersionUID = 2573250879556594115L;
 
 	private static final Log  LOGGER = LogFactory.getLog(UIInitialBean.class);
 
@@ -41,6 +42,8 @@ public class UIInitialBean extends UIAbstractBean {
 	private List<Rotulo> rotulos;
 
 	private Rotulo selectedRotulo;
+	
+	private Rotulo selectedHistory;
 
 	public String save() {
 
@@ -56,6 +59,9 @@ public class UIInitialBean extends UIAbstractBean {
 	public void init() {
 		rotulos = new LinkedList<Rotulo>();
 		searchRotuloQuery = "";
+		
+		
+		
 	}
 
 	public void searchRotulo() {
@@ -85,6 +91,24 @@ public class UIInitialBean extends UIAbstractBean {
 
 	}
 
+	public void onRowSelectHistory(SelectEvent event ) {
+
+		try {
+			
+			Rotulo transferObject = (Rotulo) event.getObject();
+
+			setSessionAttribute("fromPage", "home");
+
+			setSessionAttribute("rotulo", transferObject);
+
+			getExternalContext().redirect("report.jsf");
+		} catch (IOException e) {
+			LOGGER.error("onRowSelectHistory",e.getCause());
+		}
+
+	}
+	
+	
 	public void sendByEmailChangingStatus() {
 
 		try {
@@ -95,38 +119,30 @@ public class UIInitialBean extends UIAbstractBean {
 				return;
 			}
 				
+			Rotulo toSend = (Rotulo) selectedRotulo.clone();
+			
 			switch (selectedRotulo.getStatus()) {
 			case EM_ANALISE:
-				selectedRotulo.setStatus(StatusType.ENVIADO);
-				rotuloDataAccess.updateStatus(selectedRotulo.getId(), StatusType.ENVIADO);
+				toSend.setStatus(StatusType.ENVIADO);
 				break;
 
 			case REVISAO:
-				selectedRotulo.setStatus(StatusType.RE_ENVIADO);
-				rotuloDataAccess.updateStatus(selectedRotulo.getId(), StatusType.RE_ENVIADO);
+				toSend.setStatus(StatusType.RE_ENVIADO);
 				break;
 			default:
 				break;
 			}
 		
-			for (Rotulo rtl : rotulos) {
-			
-				if(rtl.getId().equalsIgnoreCase(selectedRotulo.getId())) {
-					rtl.setStatus(selectedRotulo.getStatus());
-					break;
-				}
-			}
-			
 			Runnable runnable = () -> {
 			    try {
-			    	reportBean.sendReportByEmail(selectedRotulo);
+			    	reportBean.sendReportByEmail(toSend);
 			    }catch (Throwable e) {
 			    	LOGGER.error("sendReportByEmail",e.getCause());
 			    }
 			};
 
 			Thread thread = new Thread(runnable);
-			thread.start();
+			thread.start();	
 			
 		} catch (Exception e) {
 			LOGGER.error("sendByEmailChangingStatus",e.getCause());
@@ -139,19 +155,19 @@ public class UIInitialBean extends UIAbstractBean {
 		try {
 
 			if(selectedRotulo.getStatus() != StatusType.REVISAO) {
+				
 				selectedRotulo.setStatus(StatusType.REVISAO);
 				rotuloDataAccess.updateStatus(selectedRotulo.getId(), StatusType.REVISAO);
-			}
-			
-			
-			for (Rotulo rtl : rotulos) {
 				
-				if(rtl.getId().equalsIgnoreCase(selectedRotulo.getId())) {
-					rtl.setStatus(selectedRotulo.getStatus());
-					break;
-				}
+				
+				for (Rotulo rtl : rotulos) {
+					
+					if(rtl.getId().equalsIgnoreCase(selectedRotulo.getId())) {
+						rtl.setStatus(selectedRotulo.getStatus());
+						break;
+					}
+				}	
 			}
-			
 			
 		} catch (Exception e) {
 			LOGGER.error("updateStatus",e.getCause());
@@ -210,4 +226,11 @@ public class UIInitialBean extends UIAbstractBean {
 		this.selectedRotulo = selectedRotulo;
 	}
 
+	public Rotulo getSelectedHistory() {
+		return selectedHistory;
+	}
+
+	public void setSelectedHistory(Rotulo selectedHistory) {
+		this.selectedHistory = selectedHistory;
+	}
 }

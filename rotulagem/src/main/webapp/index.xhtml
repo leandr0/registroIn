@@ -100,7 +100,34 @@
 						<h:outputText value="#{rotulo.data}"  />
 					</p:column>
 					
+					
+					
 					<p:rowExpansion>
+
+						<p:dataTable id="rotulo_history_list" rendered="#{not empty rotulo.history}"
+							var="history" value="#{rotulo.history}"
+							rows="5"
+		                 	paginator="true"
+		                 	paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		                 	rowsPerPageTemplate="5,10,20,30,40,50"
+		                 	sortMode="multiple"
+							selectionMode="single"
+							selection="#{initial_ui.selectedHistory}" rowKey="#{history.id}" 
+							
+							>
+							<p:ajax event="rowSelect" listener="#{initial_ui.onRowSelectHistory}" update="@form" >
+							</p:ajax>
+				            <p:column headerText="Data" sortBy="#{history.data}" width="10%">
+				                <h:outputText value="#{history.data}" />
+				            </p:column>
+				            <p:column headerText="Status Anterior" sortBy="#{history.status}" width="10%" style="text-align: center;">
+								<p:graphicImage name="images/survey.png"  width="18" rendered="#{history.status == 'EM_ANALISE'}" />
+								<p:graphicImage name="images/received.png"  width="18" rendered="#{history.status == 'ENVIADO'}"/>
+								<p:graphicImage name="images/reviewing.png"  width="18" rendered="#{history.status == 'REVISAO'}" />
+								<p:graphicImage name="images/send-email-2.png"  width="18" rendered="#{history.status == 'RE_ENVIADO'}"/>
+							</p:column> 
+				        </p:dataTable>
+				        
 						<p:panelGrid cellpadding="5">
 							<p:commandButton 
 								update="data_table_rotulos"
@@ -144,6 +171,10 @@
 
 				</p:dataTable>
 			</p:panel>
+			<p:poll interval="30" listener="#{initial_ui.searchRotulo}"
+					update="data_table_rotulos" 
+					onclick="showDiv('#loading-overlay');"
+					oncomplete="hideLoading('#loading-overlay')" />
 		</div>
 		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
 			<h:panelGrid columns="2" cellpadding="0"

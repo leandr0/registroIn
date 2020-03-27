@@ -7,19 +7,18 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
  * @author digitallam
  *
  */
-public class Rotulo implements Serializable {
+public class Rotulo implements Serializable , Cloneable{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8719771305243509677L;
+	private static final long serialVersionUID = 6454381229015614979L;
 
 	private String id;
 	
@@ -79,7 +78,9 @@ public class Rotulo implements Serializable {
 	
 	private String produto;
 	
-	private Set<Rotulo> history;
+	private List<Rotulo> history;
+	
+	private boolean historicalData;
 	
 	public Rotulo() {
 		
@@ -350,12 +351,16 @@ public class Rotulo implements Serializable {
 		this.produto = produto;
 	}
 
-	public Set<Rotulo> getHistory() {
+	public List<Rotulo> getHistory() {
 		return history;
 	}
 
-	public void setHistory(Set<Rotulo> history) {
+	public void setHistory(List<Rotulo> history) {
 		this.history = history;
+	}
+	
+	public Object clone()throws CloneNotSupportedException{  
+		return super.clone();  
 	}
 	
 	/**
@@ -377,4 +382,12 @@ public class Rotulo implements Serializable {
 		return false;
 	}
 	**/
+
+	public boolean isHistoricalData() {
+		return historicalData;
+	}
+
+	public void setHistoricalData(boolean historicalData) {
+		this.historicalData = historicalData;
+	}
 }

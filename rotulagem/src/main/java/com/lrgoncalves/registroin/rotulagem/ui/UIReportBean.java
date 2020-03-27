@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
+import javax.resource.spi.IllegalStateException;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -174,7 +175,12 @@ public class UIReportBean extends UIAbstractBean {
 
 			return "home";
 
-		} catch (Exception e) {
+		}catch (IllegalStateException s) {
+			showMessageWarn(s.getMessage());
+			LOGGER.severe(s.getMessage()); 
+		} 
+		catch (Exception e) {
+			
 			LOGGER.severe(e.getMessage());
 		}
 		return null;
@@ -185,6 +191,15 @@ public class UIReportBean extends UIAbstractBean {
 
 		try {
 
+			StatusType updateStatus = null;
+			
+			if(rotulo.getStatus() == StatusType.EM_ANALISE)
+				updateStatus = StatusType.ENVIADO;
+			
+			else
+				updateStatus = StatusType.RE_ENVIADO;
+			
+			rotulo.setStatus(updateStatus);
 			
 			Runnable runnable = () -> {
 			    try {
@@ -195,17 +210,7 @@ public class UIReportBean extends UIAbstractBean {
 			};
 
 			Thread thread = new Thread(runnable);
-			thread.start();
-		
-			StatusType updateStatus = null;
-			
-			if(rotulo.getStatus() == StatusType.EM_ANALISE)
-				updateStatus = StatusType.ENVIADO;
-			
-			else
-				updateStatus = StatusType.RE_ENVIADO;
-			
-			rotuloDataAccess.updateStatus(rotulo.getId(), updateStatus);
+			thread.start();	
 			
 		} catch (Exception e) {
 			LOGGER.severe(e.getMessage());
