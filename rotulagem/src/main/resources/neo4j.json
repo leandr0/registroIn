@@ -1,0 +1,3 @@
+CREATE(petstore_auth:Security { definition:{ name:'petstore_auth',type:'oauth2', authorization_url:'http://petstore.swagger.io/oauth/dialog',flow:'implicit' }})
+CREATE( write_pet: SecurityScope {key :'write:pets', description : 'modify pets in your account'}) 
+CREATE( read_pet: SecurityScope{ key :'read:pets', description :'read your pets' } )
